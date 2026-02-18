@@ -1,0 +1,65 @@
+# Supervised Fine-Tuning (SFT) Configuration
+# Phase 2: Instruction-following on top of CPT checkpoint
+
+model:
+  name: "checkpoints/cpt/final"  # merged CPT model
+  load_in_4bit: true
+  max_seq_length: 2048
+  dtype: null
+
+lora:
+  r: 64
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+    # No embed_tokens/lm_head — already trained in CPT
+  bias: "none"
+  use_rslora: true
+
+training:
+  output_dir: "checkpoints/sft"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4  # effective batch = 16
+  learning_rate: 2.0e-5
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: 3
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "wandb"
+
+data:
+  train_file: "data/processed/sft_train.jsonl"
+  validation_file: "data/processed/sft_val.jsonl"
+  chat_template: "chatml"
+  max_length: 2048
+
+sft:
+  # Distribution of instruction types (for reference)
+  # 40% translation gn->es
+  # 40% translation es->gn
+  # 5% bilingual chat
+  # 5% sentiment analysis
+  # 5.5% classification (humor, offense, emotion)
+  # 4.5% text generation in Guaraní
+  packing: false
+  neftune_noise_alpha: 5  # NEFTune for better generalization
+
+wandb:
+  project: "guarani-lm"
+  run_name: "sft-qwen05b-r64"

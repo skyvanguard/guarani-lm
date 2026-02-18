@@ -1,0 +1,58 @@
+# Evaluation Configuration
+
+model:
+  name: "checkpoints/sft/final"  # or HF hub path
+  load_in_4bit: true
+  max_seq_length: 2048
+
+evaluation:
+  output_dir: "eval/results"
+  batch_size: 8
+  max_new_tokens: 256
+  temperature: 0.1
+  top_p: 0.9
+  do_sample: false  # greedy for reproducibility
+
+tasks:
+  translation_gn_es:
+    enabled: true
+    test_file: "data/processed/test_translation_gn_es.jsonl"
+    metrics: ["bleu", "chrf2"]
+    source_lang: "grn"
+    target_lang: "spa"
+
+  translation_es_gn:
+    enabled: true
+    test_file: "data/processed/test_translation_es_gn.jsonl"
+    metrics: ["bleu", "chrf2"]
+    source_lang: "spa"
+    target_lang: "grn"
+
+  sentiment:
+    enabled: true
+    test_file: "data/processed/test_sentiment.jsonl"
+    metrics: ["accuracy", "macro_f1"]
+    num_labels: 3  # positive, negative, neutral
+
+  classification:
+    enabled: true
+    test_file: "data/processed/test_classification.jsonl"
+    metrics: ["accuracy", "macro_f1"]
+
+  perplexity:
+    enabled: true
+    test_file: "data/processed/test_perplexity_gn.jsonl"
+    metrics: ["perplexity"]
+
+baselines:
+  nllb_200:
+    model: "facebook/nllb-200-distilled-600M"
+    tasks: ["translation_gn_es", "translation_es_gn"]
+
+  gn_bert:
+    model: "mmaguero/gn-bert-base"
+    tasks: ["sentiment"]
+
+  qwen_base:
+    model: "Qwen/Qwen2.5-0.5B"
+    tasks: ["perplexity"]
