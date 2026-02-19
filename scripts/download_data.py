@@ -22,6 +22,7 @@ import argparse
 import json
 import shutil
 import zipfile
+from datetime import datetime, date
 from pathlib import Path
 
 import requests
@@ -71,6 +72,7 @@ HF_DATASETS = {
     # === Classification datasets ===
     "sentiment": {
         "path": "mmaguero/gn-jopara-sentiment-analysis",
+        "name": "balanced",
         "split": "train",
         "desc": "Guarani sentiment analysis",
     },
@@ -110,10 +112,10 @@ HF_DATASETS = {
     },
     # === Evaluation benchmarks ===
     "flores200": {
-        "path": "facebook/flores",
+        "path": "openlanguagedata/flores_plus",
         "name": "grn_Latn",
         "split": "devtest",
-        "desc": "FLORES-200 Guarani eval set",
+        "desc": "FLORES+ Guarani eval set",
     },
     "belebele": {
         "path": "facebook/belebele",
@@ -170,7 +172,7 @@ def save_hf_dataset(key: str, out_dir: Path) -> None:
         return
 
     print(f"  Cargando {cfg['desc']} desde HuggingFace ...")
-    load_kwargs = {"path": cfg["path"], "split": cfg["split"], "trust_remote_code": True}
+    load_kwargs = {"path": cfg["path"], "split": cfg["split"]}
     if "name" in cfg:
         load_kwargs["name"] = cfg["name"]
 
@@ -182,9 +184,14 @@ def save_hf_dataset(key: str, out_dir: Path) -> None:
 
     count = len(ds)
     print(f"  Guardando {count:,} registros en {out_file.name} ...")
+    def _default_serializer(obj: object) -> str:
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
     with open(out_file, "w", encoding="utf-8") as fh:
         for row in tqdm(ds, desc=key, total=count):
-            fh.write(json.dumps(dict(row), ensure_ascii=False) + "\n")
+            fh.write(json.dumps(dict(row), ensure_ascii=False, default=_default_serializer) + "\n")
 
     size_mb = out_file.stat().st_size / (1 << 20)
     print(f"  Guardado: {out_file} ({size_mb:.1f} MB, {count:,} registros)")
@@ -327,10 +334,10 @@ def download_gov_traductor() -> None:
     """Download official Paraguay government ES-GN translator CSVs (SPL, datos abiertos)."""
     print("\n=== Traductor Oficial Gov.py (datos abiertos SPL) ===")
     dest_es_gn = RAW_DIR / "traductor_gov_es_gn.csv"
-    download_file(GOV_PY_TRADUCTOR_ES_GN, dest_es_gn, desc="Traductor ES→GN (datos.gov.py)")
+    download_file(GOV_PY_TRADUCTOR_ES_GN, dest_es_gn, desc="Traductor ES-GN (datos.gov.py)")
 
     dest_gn_es = RAW_DIR / "traductor_gov_gn_es.csv"
-    download_file(GOV_PY_VOCABULARIO_GN_ES, dest_gn_es, desc="Vocabulario GN→ES (datos.gov.py)")
+    download_file(GOV_PY_VOCABULARIO_GN_ES, dest_gn_es, desc="Vocabulario GN-ES (datos.gov.py)")
 
 
 # ---------------------------------------------------------------------------
@@ -433,7 +440,7 @@ def main() -> None:
         if p.is_file():
             size_mb = p.stat().st_size / (1 << 20)
             total_size += size_mb
-            print(f"  {p.relative_to(RAW_DIR):<50} {size_mb:>8.1f} MB")
+            print(f"  {str(p.relative_to(RAW_DIR)):<50} {size_mb:>8.1f} MB")
     print(f"\n  {'TOTAL':<50} {total_size:>8.1f} MB")
 
 
