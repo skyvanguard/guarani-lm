@@ -10,7 +10,7 @@ Confirmed sources (see docs/data_sources.md for full details):
   - mmaguero datasets (sentiment, humor, offensive, emotion)
   - Alpaca-Guarani (52K instructions, low quality)
   - GUA-SPA 2023 shared task
-  - Official Paraguay Gov translator (1.5K pairs, datos abiertos)
+  - Official Paraguay Gov translator (2 CSVs, ~3K pairs, datos abiertos SPL)
   - NLLB-Seed (6K professional pairs)
   - FLORES-200 + Belebele (evaluation benchmarks)
   - Tatoeba sentences
@@ -45,8 +45,12 @@ GONGORA_REPO_ZIP = (
     "https://github.com/sgongora27/giossa-gongora-guarani-2021/archive/refs/heads/main.zip"
 )
 
-GOV_PY_TRADUCTOR_CSV = (
+GOV_PY_TRADUCTOR_ES_GN = (
     "https://www.datos.gov.py/sites/default/files/traductor-espanol-guarani.csv"
+)
+
+GOV_PY_VOCABULARIO_GN_ES = (
+    "https://www.datos.gov.py/sites/default/files/traductor-guarani-espanol.csv"
 )
 
 # HuggingFace datasets config: {key: {path, name?, split, subdir}}
@@ -320,10 +324,13 @@ def download_tatoeba() -> None:
 
 
 def download_gov_traductor() -> None:
-    """Download official Paraguay government ES-GN translator CSV (1,514 pairs)."""
-    print("\n=== Traductor Oficial Gov.py (datos abiertos) ===")
-    dest = RAW_DIR / "traductor_gov_py.csv"
-    download_file(GOV_PY_TRADUCTOR_CSV, dest, desc="Traductor oficial Gov.py")
+    """Download official Paraguay government ES-GN translator CSVs (SPL, datos abiertos)."""
+    print("\n=== Traductor Oficial Gov.py (datos abiertos SPL) ===")
+    dest_es_gn = RAW_DIR / "traductor_gov_es_gn.csv"
+    download_file(GOV_PY_TRADUCTOR_ES_GN, dest_es_gn, desc="Traductor ES→GN (datos.gov.py)")
+
+    dest_gn_es = RAW_DIR / "traductor_gov_gn_es.csv"
+    download_file(GOV_PY_VOCABULARIO_GN_ES, dest_gn_es, desc="Vocabulario GN→ES (datos.gov.py)")
 
 
 # ---------------------------------------------------------------------------

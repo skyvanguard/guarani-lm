@@ -66,36 +66,44 @@ Hardware objetivo: RTX 4070 Laptop (8GB VRAM), 16GB RAM, Intel Ultra 7 155H
 | 21 | Paraguayologia diccionario | 1,300+ | ~100K | Web (scraping) | ? | Alta | https://paraguayologia.com/diccionario-paraguayo/ |
 | 22 | Paraguayologia traductor | 6,937 pares | ~50K | Web (scraping) | ? | Alta | https://paraguayologia.com/traductor-guarani-espanol/ |
 | 23 | Glosbe GN-ES | 6,992 frases + 149K ejemplos | ~500K-1M | Web | ToS restric. | Media | https://es.glosbe.com/gn/es |
-| 24 | Traductor Oficial Gov.py | 1,514 pares (CSV) | ~15K | CSV | Datos Abiertos PY | Muy Alta | https://www.datos.gov.py/dataset/traductor-espanol-guarani |
+| 24 | Traductor Oficial Gov.py (ES→GN) | 1,514 pares (CSV) | ~15K | CSV | Datos Abiertos PY | Muy Alta | https://www.datos.gov.py/dataset/traductor-espanol-guarani |
+| 25 | Vocabularios Gov.py (GN→ES) | ~1,500 pares (CSV) | ~15K | CSV | Datos Abiertos PY | Muy Alta | https://www.datos.gov.py/dataset/vocabularios-del-guarani-al-espa%C3%B1ol |
+| 26 | COREGUAPA (SPL) | ? (corpus de referencia) | ? | Web (busquedas) | Gubernamental | Muy Alta | https://corpus.spl.gov.py/ |
+| 27 | Diccionario Guarani Paraguayo (SPL) | ~15,000 entradas | ~150K | Web/App Android | Gubernamental | Muy Alta | https://spl.gov.py/es/diccionario-guarani-paraguayo/ |
 
-**Notas sobre Traductor Oficial Gov.py:**
-- CSV descargable directamente: `https://www.datos.gov.py/sites/default/files/traductor-espanol-guarani.csv`
-- El traductor web completo (https://www.paraguay.gov.py/traductor-guarani) tiene ~15,000 entradas, pero el CSV publico solo contiene 1,514 pares.
-- La Secretaria de Politicas Linguisticas (SPL) tambien mantiene un diccionario en https://spl.gov.py/ (requiere scraping).
-- Calidad MUY alta: traducciones oficiales del gobierno, validadas por linguistas de la SPL.
-- Licencia abierta: publicado en datos.gov.py bajo datos abiertos de Paraguay.
+**Notas sobre recursos de la SPL (Secretaria de Politicas Linguisticas):**
+- **2 CSVs descargables** en datos.gov.py (datos abiertos):
+  - ES→GN: `https://www.datos.gov.py/sites/default/files/traductor-espanol-guarani.csv`
+  - GN→ES: `https://www.datos.gov.py/sites/default/files/traductor-guarani-espanol.csv`
+- **COREGUAPA** (Corpus de Referencia del Guarani Paraguayo Actual): corpus linguistico buscable en corpus.spl.gov.py, pero NO descargable como bulk. Contiene textos reales del uso del Guarani (formal e informal). Posible scraping via busquedas.
+- **Diccionario Guarani Paraguayo**: creado por la Academia de la Lengua Guarani, disponible online y como app Android. ~15,000 entradas con definiciones, ejemplos y contexto.
+- El traductor web completo (https://www.paraguay.gov.py/traductor-guarani) tiene ~15,000 entradas, pero los CSVs publicos solo contienen ~1,514 pares cada uno.
+- Calidad MUY alta: traducciones y definiciones oficiales validadas por linguistas de la SPL.
+- La SPL tambien tiene 11 diccionarios de lenguas indigenas (Nivacle, Ayoreo, Toba Qom, etc.) — no relevantes para GuaraniLM pero potencialmente utiles para expansion futura.
 
 ### 1.5 Fuentes por scrapear (no descargadas aun)
 
 | # | Fuente | Estimacion | Tipo | Calidad | URL |
 |---|--------|-----------|------|---------|-----|
-| 25 | Orembae (Biblioteca Virtual) | 14,000+ poemas/escritos, ~2-5M tokens | Monolingue GN | Alta | https://www.orembae.org.py |
-| 26 | ABC Color Remiandy | Miles de articulos | Paralelo GN-ES | Alta | https://www.abc.com.py/especiales/remiandu/ |
+| 28 | Orembae (Biblioteca Virtual) | 14,000+ poemas/escritos, ~2-5M tokens | Monolingue GN | Alta | https://www.orembae.org.py |
+| 29 | ABC Color Remiandy | Miles de articulos | Paralelo GN-ES | Alta | https://www.abc.com.py/especiales/remiandu/ |
+| 30 | COREGUAPA scraping | Textos del corpus via busquedas | Monolingue GN | Muy Alta | https://corpus.spl.gov.py/ |
+| 31 | Diccionario SPL scraping | ~15,000 definiciones | Paralelo GN-ES | Muy Alta | https://spl.gov.py/es/diccionario-guarani-paraguayo/ |
 
 ### 1.6 Augmentation sintetico
 
 | # | Fuente | Potencial | Tokens est. | Calidad | URL |
 |---|--------|-----------|-------------|---------|-----|
-| 27 | NLLB-200 distilled 600M | Forward + back-translation | ~2-5M | Media | https://huggingface.co/facebook/nllb-200-distilled-600M |
-| 28 | Grammar augmentation (Baladon) | Oraciones sinteticas por gramatica | ~1M | Baja | https://github.com/AlexisBaladon/SyntaxGrammar-es-gn |
+| 32 | NLLB-200 distilled 600M | Forward + back-translation | ~2-5M | Media | https://huggingface.co/facebook/nllb-200-distilled-600M |
+| 33 | Grammar augmentation (Baladon) | Oraciones sinteticas por gramatica | ~1M | Baja | https://github.com/AlexisBaladon/SyntaxGrammar-es-gn |
 
 ### 1.7 Benchmarks de evaluacion (NO para training)
 
 | # | Fuente | Registros | Uso | URL |
 |---|--------|-----------|-----|-----|
-| 29 | FLORES-200 | 2,009 oraciones | Eval traduccion | https://huggingface.co/datasets/facebook/flores |
-| 30 | Belebele | ~900 QA | Eval comprension | https://huggingface.co/datasets/facebook/belebele |
-| 31 | NLLB-Seed | 6,193 pares | Eval traduccion | https://github.com/facebookresearch/flores |
+| 34 | FLORES-200 | 2,009 oraciones | Eval traduccion | https://huggingface.co/datasets/facebook/flores |
+| 35 | Belebele | ~900 QA | Eval comprension | https://huggingface.co/datasets/facebook/belebele |
+| 36 | NLLB-Seed | 6,193 pares | Eval traduccion | https://github.com/facebookresearch/flores |
 
 ### 1.8 Fuentes descartadas
 
@@ -396,7 +404,14 @@ Dia 14: Export y publicacion
 | Leipzig | Complemento monolingue |
 | NLLB augmentation | Escalar datos paralelos |
 | FLORES/Belebele/NLLB-Seed | Evaluacion |
-| Traductor Oficial Gov.py | Traducciones oficiales validadas por SPL |
+| Traductor Oficial Gov.py (2 CSVs) | Traducciones oficiales validadas por SPL |
+
+### SCRAPEAR (gubernamental, alta calidad)
+
+| Fuente | Potencial |
+|--------|-----------|
+| COREGUAPA (corpus.spl.gov.py) | Corpus de referencia oficial, textos reales en GN |
+| Diccionario SPL | ~15,000 definiciones oficiales GN con ejemplos |
 
 ### USAR CON CAUTELA
 
