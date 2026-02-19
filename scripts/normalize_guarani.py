@@ -176,19 +176,29 @@ def normalize(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def process_jsonl(input_path: Path, output_path: Path, text_field: str = "text") -> int:
+def process_jsonl(
+    input_path: Path,
+    output_path: Path,
+    text_field: str = "text",
+    text_fields: list[str] | None = None,
+    min_words: int = 0,
+) -> int:
     """Normalize all text in a JSONL file.
 
     Args:
         input_path: Path to the input JSONL file.
         output_path: Path to write the normalized JSONL file.
         text_field: Name of the JSON field containing text to normalize.
+        text_fields: List of fields to normalize (overrides text_field).
+        min_words: Minimum word count to keep a record (0 = keep all).
 
     Returns:
-        Number of records processed.
+        Number of records written.
     """
+    fields = text_fields or [text_field]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
+    skipped = 0
 
     with open(input_path, "r", encoding="utf-8") as fin, open(
         output_path, "w", encoding="utf-8"
@@ -203,12 +213,24 @@ def process_jsonl(input_path: Path, output_path: Path, text_field: str = "text")
                 print(f"  [warn] Linea {line_num}: JSON invalido, saltando.")
                 continue
 
-            if text_field in record:
-                record[text_field] = normalize(record[text_field])
+            for f in fields:
+                if f in record and isinstance(record[f], str):
+                    record[f] = normalize(record[f])
+
+            # Filter short records
+            if min_words > 0:
+                total_words = sum(
+                    len(record.get(f, "").split()) for f in fields if isinstance(record.get(f), str)
+                )
+                if total_words < min_words:
+                    skipped += 1
+                    continue
 
             fout.write(json.dumps(record, ensure_ascii=False) + "\n")
             count += 1
 
+    if skipped:
+        print(f"  [info] {skipped} registros filtrados (<{min_words} palabras)")
     return count
 
 

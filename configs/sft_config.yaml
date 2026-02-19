@@ -41,7 +41,7 @@ training:
   save_total_limit: 3
   seed: 42
   dataloader_num_workers: 2
-  report_to: "wandb"
+  report_to: "none"  # cambiar a "wandb" si se desea logging
 
 data:
   train_file: "data/processed/sft_train.jsonl"

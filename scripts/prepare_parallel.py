@@ -1,316 +1,388 @@
-"""Prepare the Jojajovai parallel corpus for training.
+"""Unify all parallel (bilingual gn<->es) data into one JSONL file.
 
-Reads CSV/TSV files from the Jojajovai dataset (data/raw/jojajovai/),
-creates aligned Guarani-Spanish parallel pairs, and applies normalization.
+Reads from multiple sources in data/raw/, normalizes Guarani text,
+deduplicates, filters, and writes to data/processed/parallel_all.jsonl.
 
-Output: data/interim/parallel_gn_es.jsonl  (one {"gn": "...", "es": "..."} per pair)
+Sources:
+  - Jojajovai CSV  (jojajovai/jojajovai_all.csv)
+  - Jojajovai HF   (jojajovai_hf/jojajovai_hf.jsonl)
+  - Gov ES->GN      (traductor_gov_es_gn.csv)
+  - Gov GN->ES      (traductor_gov_gn_es.csv)
+  - Tatoeba          (tatoeba_grn.tsv.bz2) — monolingual gn only
+  - GuaSpa 2023      (gua_spa/gua_spa_2023.jsonl) — monolingual gn (NER data)
+  - Gongora           (gongora/...ParallelSet/*.aligned inside zips)
+
+NOT included:
+  - FLORES+ (eval/flores200.jsonl) — reserved for evaluation
+  - Alpaca Guarani — instruction data, not simple parallel
 """
 
 from __future__ import annotations
 
-import argparse
+import bz2
 import csv
+import hashlib
 import json
 import sys
+import zipfile
 from pathlib import Path
 
-from tqdm import tqdm
+# ---------------------------------------------------------------------------
+# Path setup
+# ---------------------------------------------------------------------------
 
-# Ensure scripts/ is importable
 _SCRIPT_DIR = Path(__file__).resolve().parent
 if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
-from normalize_guarani import normalize
+from normalize_guarani import normalize  # noqa: E402
 
 PROJECT_ROOT = _SCRIPT_DIR.parent
-DEFAULT_INPUT_DIR = PROJECT_ROOT / "data" / "raw" / "jojajovai"
-DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "interim" / "parallel_gn_es.jsonl"
+RAW_DIR = PROJECT_ROOT / "data" / "raw"
+OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "parallel_all.jsonl"
 
-# Minimum length for either side of a parallel pair
-MIN_PAIR_LENGTH = 5
-
-# Maximum length ratio between the two sides (avoids misaligned pairs)
-MAX_LENGTH_RATIO = 5.0
+# Minimum word count for either side of a parallel pair
+MIN_WORDS = 3
 
 
 # ---------------------------------------------------------------------------
-# File detection and reading
+# Helpers
 # ---------------------------------------------------------------------------
 
 
-def detect_delimiter(file_path: Path) -> str:
-    """Detect CSV delimiter by reading the first few lines."""
-    with open(file_path, "r", encoding="utf-8") as fh:
-        sample = fh.read(4096)
-
-    # Try common delimiters
-    for delim in ["\t", ",", ";", "|"]:
-        if delim in sample:
-            # Verify it appears consistently
-            lines = sample.strip().split("\n")[:5]
-            counts = [line.count(delim) for line in lines if line.strip()]
-            if counts and all(c == counts[0] for c in counts) and counts[0] > 0:
-                return delim
-
-    return ","  # fallback
+def _hash(text: str) -> str:
+    """Return a short hash of the text for deduplication."""
+    return hashlib.md5(text.encode("utf-8")).hexdigest()
 
 
-def detect_columns(
-    headers: list[str],
-) -> tuple[int | None, int | None]:
-    """Detect which columns contain Guarani and Spanish text.
-
-    Returns (gn_col_index, es_col_index) or (None, None) if not found.
-    """
-    gn_col = None
-    es_col = None
-
-    gn_keywords = {"gn", "guarani", "guaraní", "avañe'ẽ", "source_gn", "text_gn", "guarani_text"}
-    es_keywords = {"es", "spanish", "español", "castellano", "source_es", "text_es", "spanish_text"}
-
-    headers_lower = [h.strip().lower() for h in headers]
-
-    for i, h in enumerate(headers_lower):
-        if h in gn_keywords or any(kw in h for kw in gn_keywords):
-            gn_col = i
-        elif h in es_keywords or any(kw in h for kw in es_keywords):
-            es_col = i
-
-    # If only two columns and no match, assume first=gn, second=es
-    if gn_col is None and es_col is None and len(headers) == 2:
-        gn_col, es_col = 0, 1
-
-    return gn_col, es_col
+def _word_count(text: str) -> int:
+    return len(text.split())
 
 
-def read_parallel_file(file_path: Path) -> list[tuple[str, str]]:
-    """Read a parallel corpus file and return (guarani, spanish) pairs."""
-    pairs: list[tuple[str, str]] = []
+# ---------------------------------------------------------------------------
+# Source readers — each returns list[dict] with keys gn, es (optional), source
+# ---------------------------------------------------------------------------
 
-    suffix = file_path.suffix.lower()
-    delimiter = "\t" if suffix == ".tsv" else detect_delimiter(file_path)
 
-    print(f"  Leyendo {file_path.name} (delimiter={repr(delimiter)}) ...")
+def read_jojajovai_csv() -> list[dict]:
+    """Jojajovai CSV — columns: split,source,gn,es,tokens_gn,tokens_es."""
+    path = RAW_DIR / "jojajovai" / "jojajovai_all.csv"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
 
-    with open(file_path, "r", encoding="utf-8") as fh:
-        reader = csv.reader(fh, delimiter=delimiter)
-
-        # Try to detect header row
-        first_row = next(reader, None)
-        if first_row is None:
-            return pairs
-
-        gn_col, es_col = detect_columns(first_row)
-
-        if gn_col is not None and es_col is not None:
-            # First row was a header, columns detected
-            print(f"    Columnas detectadas: gn={first_row[gn_col]}, es={first_row[es_col]}")
-        else:
-            # First row might be data; assume 2-column format (gn, es)
-            if len(first_row) >= 2:
-                gn_col, es_col = 0, 1
-                # Re-add first row as data
-                pairs.append((first_row[gn_col].strip(), first_row[es_col].strip()))
-                print(f"    Sin header detectado, asumiendo col0=gn, col1=es")
-            else:
-                print(f"    [warn] No se puede determinar estructura de {file_path.name}")
-                return pairs
-
+    records: list[dict] = []
+    with open(path, "r", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
         for row in reader:
-            if len(row) <= max(gn_col, es_col):
-                continue
-            gn_text = row[gn_col].strip()
-            es_text = row[es_col].strip()
-            if gn_text and es_text:
-                pairs.append((gn_text, es_text))
+            gn = (row.get("gn") or "").strip()
+            es = (row.get("es") or "").strip()
+            if gn and es:
+                records.append({"gn": gn, "es": es, "source": "jojajovai"})
 
-    return pairs
+    print(f"  jojajovai_csv: {len(records)} pares leidos")
+    return records
 
 
-def read_jsonl_file(file_path: Path) -> list[tuple[str, str]]:
-    """Read parallel pairs from a JSONL file."""
-    pairs: list[tuple[str, str]] = []
+def read_jojajovai_hf() -> list[dict]:
+    """Jojajovai HF JSONL — fields: gn, es."""
+    path = RAW_DIR / "jojajovai_hf" / "jojajovai_hf.jsonl"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
 
-    print(f"  Leyendo {file_path.name} (JSONL) ...")
-
-    with open(file_path, "r", encoding="utf-8") as fh:
+    records: list[dict] = []
+    with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             line = line.strip()
             if not line:
                 continue
             try:
-                record = json.loads(line)
+                obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            gn = (obj.get("gn") or "").strip()
+            es = (obj.get("es") or "").strip()
+            if gn and es:
+                records.append({"gn": gn, "es": es, "source": "jojajovai"})
 
-            # Try common field names
-            gn_text = (
-                record.get("gn")
-                or record.get("guarani")
-                or record.get("source_gn")
-                or record.get("text_gn")
-                or ""
-            )
-            es_text = (
-                record.get("es")
-                or record.get("spanish")
-                or record.get("español")
-                or record.get("source_es")
-                or record.get("text_es")
-                or ""
-            )
+    print(f"  jojajovai_hf: {len(records)} pares leidos")
+    return records
 
-            if gn_text and es_text:
-                pairs.append((gn_text.strip(), es_text.strip()))
 
+def read_gov_es_gn() -> list[dict]:
+    """Gov traductor ES->GN — columns: palabra_id, palabra(ES), clavebusqueda, significado(GN), archivo."""
+    path = RAW_DIR / "traductor_gov_es_gn.csv"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
+
+    records: list[dict] = []
+    with open(path, "r", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        for row in reader:
+            es = (row.get("palabra") or "").strip()
+            gn = (row.get("significado") or "").strip()
+            if gn and es and gn.upper() != "NULL":
+                records.append({"gn": gn, "es": es, "source": "gov"})
+
+    print(f"  gov_es_gn: {len(records)} pares leidos")
+    return records
+
+
+def read_gov_gn_es() -> list[dict]:
+    """Gov vocabulario GN->ES — columns: palabra_id, palabra(GN), clavebusqueda, significado(ES), archivo."""
+    path = RAW_DIR / "traductor_gov_gn_es.csv"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
+
+    records: list[dict] = []
+    with open(path, "r", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        for row in reader:
+            gn = (row.get("palabra") or "").strip()
+            es = (row.get("significado") or "").strip()
+            if gn and es and es.upper() != "NULL":
+                records.append({"gn": gn, "es": es, "source": "gov"})
+
+    print(f"  gov_gn_es: {len(records)} pares leidos")
+    return records
+
+
+def read_tatoeba() -> list[dict]:
+    """Tatoeba GRN — bz2 compressed TSV: ID\\tlang\\ttext. Monolingual gn only."""
+    path = RAW_DIR / "tatoeba_grn.tsv.bz2"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
+
+    records: list[dict] = []
+    with bz2.open(path, "rt", encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            parts = line.strip().split("\t")
+            if len(parts) >= 3 and parts[1] == "grn":
+                gn = parts[2].strip()
+                if gn:
+                    records.append({"gn": gn, "source": "tatoeba"})
+
+    print(f"  tatoeba: {len(records)} oraciones monolingues leidas")
+    return records
+
+
+def read_guaspa() -> list[dict]:
+    """GuaSpa 2023 NER JSONL — field 'text' contains Guarani. Monolingual."""
+    path = RAW_DIR / "gua_spa" / "gua_spa_2023.jsonl"
+    if not path.exists():
+        print(f"  [skip] No encontrado: {path}")
+        return []
+
+    records: list[dict] = []
+    with open(path, "r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            gn = (obj.get("text") or "").strip()
+            if gn:
+                records.append({"gn": gn, "source": "guaspa"})
+
+    print(f"  guaspa: {len(records)} oraciones monolingues leidas")
+    return records
+
+
+def _read_aligned_content(content: str) -> list[tuple[str, str]]:
+    """Parse a .aligned file content into (gn, es) pairs.
+
+    Format: blocks separated by blank lines.  Each block has lines
+    starting with 'gn: ' and 'es: '.
+    """
+    pairs: list[tuple[str, str]] = []
+    blocks = content.split("\n\n")
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+        gn_text = ""
+        es_text = ""
+        for line in block.split("\n"):
+            line = line.strip()
+            if line.startswith("gn:"):
+                gn_text = line[3:].strip()
+            elif line.startswith("es:"):
+                es_text = line[3:].strip()
+        if gn_text and es_text:
+            pairs.append((gn_text, es_text))
     return pairs
 
 
+def read_gongora() -> list[dict]:
+    """Gongora ParallelSet — .aligned files inside two zip archives."""
+    parallel_dir = RAW_DIR / "gongora" / "giossa-gongora-guarani-2021-main" / "ParallelSet"
+    if not parallel_dir.exists():
+        print(f"  [skip] No encontrado: {parallel_dir}")
+        return []
+
+    records: list[dict] = []
+    zip_files = sorted(parallel_dir.glob("*.zip"))
+
+    if not zip_files:
+        print(f"  [skip] No hay archivos .zip en {parallel_dir}")
+        return []
+
+    for zip_path in zip_files:
+        try:
+            with zipfile.ZipFile(zip_path, "r") as zf:
+                aligned_names = [n for n in zf.namelist() if n.endswith(".aligned")]
+                for name in aligned_names:
+                    with zf.open(name) as f:
+                        content = f.read().decode("utf-8", errors="replace")
+                    pairs = _read_aligned_content(content)
+                    for gn, es in pairs:
+                        records.append({"gn": gn, "es": es, "source": "gongora"})
+        except (zipfile.BadZipFile, OSError) as exc:
+            print(f"  [warn] Error leyendo {zip_path.name}: {exc}")
+
+    print(f"  gongora: {len(records)} pares leidos")
+    return records
+
+
 # ---------------------------------------------------------------------------
-# Quality filters for parallel pairs
+# Main pipeline
 # ---------------------------------------------------------------------------
-
-
-def is_valid_pair(gn: str, es: str) -> bool:
-    """Check if a parallel pair passes quality filters."""
-    # Minimum length
-    if len(gn) < MIN_PAIR_LENGTH or len(es) < MIN_PAIR_LENGTH:
-        return False
-
-    # Length ratio check (avoids badly aligned pairs)
-    ratio = max(len(gn), len(es)) / max(min(len(gn), len(es)), 1)
-    if ratio > MAX_LENGTH_RATIO:
-        return False
-
-    # Skip if both sides are identical (probably not a real translation)
-    if gn.lower() == es.lower():
-        return False
-
-    return True
-
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Prepara el corpus paralelo Jojajovai (Guarani-Espanol)."
-    )
-    parser.add_argument(
-        "--input-dir",
-        type=Path,
-        default=DEFAULT_INPUT_DIR,
-        help=f"Directorio con archivos Jojajovai (default: {DEFAULT_INPUT_DIR}).",
-    )
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=DEFAULT_OUTPUT,
-        help=f"Archivo JSONL de salida (default: {DEFAULT_OUTPUT}).",
-    )
-    parser.add_argument(
-        "--min-length",
-        type=int,
-        default=MIN_PAIR_LENGTH,
-        help=f"Longitud minima por lado del par (default: {MIN_PAIR_LENGTH}).",
-    )
-    parser.add_argument(
-        "--max-ratio",
-        type=float,
-        default=MAX_LENGTH_RATIO,
-        help=f"Ratio maximo de longitud entre lados (default: {MAX_LENGTH_RATIO}).",
-    )
-    return parser.parse_args()
 
 
 def main() -> None:
-    args = parse_args()
+    print("=" * 60)
+    print("GuaraniLM - Preparacion corpus paralelo unificado")
+    print("=" * 60)
+    print()
 
-    global MIN_PAIR_LENGTH, MAX_LENGTH_RATIO
-    MIN_PAIR_LENGTH = args.min_length
-    MAX_LENGTH_RATIO = args.max_ratio
+    # ── 1. Read all sources ──────────────────────────────────────
+    print("Leyendo fuentes...")
+    all_records: list[dict] = []
+    stats: dict[str, dict[str, int]] = {}
 
-    input_dir = args.input_dir
+    # Parallel (bilingual) sources
+    for reader_fn, label in [
+        (read_jojajovai_csv, "jojajovai_csv"),
+        (read_jojajovai_hf, "jojajovai_hf"),
+        (read_gov_es_gn, "gov_es_gn"),
+        (read_gov_gn_es, "gov_gn_es"),
+        (read_gongora, "gongora"),
+    ]:
+        recs = reader_fn()
+        stats[label] = {"raw": len(recs)}
+        all_records.extend(recs)
 
-    if not input_dir.exists():
-        print(f"[error] Directorio de entrada no encontrado: {input_dir}")
-        print("  Ejecuta primero: python scripts/download_data.py --sources jojajovai")
-        sys.exit(1)
+    # Monolingual sources
+    for reader_fn, label in [
+        (read_tatoeba, "tatoeba"),
+        (read_guaspa, "guaspa"),
+    ]:
+        recs = reader_fn()
+        stats[label] = {"raw": len(recs)}
+        all_records.extend(recs)
 
-    print("GuaraniLM - Preparacion corpus paralelo Jojajovai")
-    print(f"  Directorio entrada: {input_dir}")
+    total_raw = len(all_records)
+    print(f"\n  Total registros crudos: {total_raw}")
 
-    # Collect all data files
-    all_pairs: list[tuple[str, str]] = []
+    # ── 2. Normalize, filter, deduplicate ────────────────────────
+    print("\nNormalizando y filtrando...")
+    seen_hashes: set[str] = set()
+    kept: list[dict] = []
+    dupes = 0
+    filtered_short = 0
+    source_kept: dict[str, int] = {}
 
-    supported_extensions = {".csv", ".tsv", ".txt"}
-    data_files = sorted(
-        f for f in input_dir.rglob("*") if f.is_file() and f.suffix.lower() in supported_extensions
-    )
-    jsonl_files = sorted(
-        f for f in input_dir.rglob("*") if f.is_file() and f.suffix.lower() in {".jsonl", ".json"}
-    )
+    for rec in all_records:
+        # Normalize Guarani side
+        gn = normalize(rec["gn"])
+        es = rec.get("es", "")
 
-    if not data_files and not jsonl_files:
-        print(f"  [warn] No se encontraron archivos de datos en {input_dir}")
-        # List what's there
-        all_files = list(input_dir.rglob("*"))
-        if all_files:
-            print(f"  Archivos encontrados:")
-            for f in all_files[:20]:
-                print(f"    {f.relative_to(input_dir)}")
-        sys.exit(1)
+        # Spanish side: basic strip (normalize only applies to gn)
+        if es:
+            es = es.strip()
 
-    for f in data_files:
-        pairs = read_parallel_file(f)
-        print(f"    -> {len(pairs)} pares")
-        all_pairs.extend(pairs)
+        # Filter: skip if gn is empty or too short
+        if not gn or _word_count(gn) < MIN_WORDS:
+            filtered_short += 1
+            continue
 
-    for f in jsonl_files:
-        pairs = read_jsonl_file(f)
-        print(f"    -> {len(pairs)} pares")
-        all_pairs.extend(pairs)
+        # For bilingual records, also check es side
+        is_bilingual = bool(es)
+        if is_bilingual and _word_count(es) < MIN_WORDS:
+            filtered_short += 1
+            continue
 
-    print(f"\n  Total pares crudos: {len(all_pairs)}")
+        # Deduplicate by hash of normalized gn text
+        h = _hash(gn.lower())
+        if h in seen_hashes:
+            dupes += 1
+            continue
+        seen_hashes.add(h)
 
-    # Normalize and filter
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    kept = 0
-    filtered = 0
-    seen: set[str] = set()
+        # Build output record
+        out: dict[str, str] = {"gn": gn, "source": rec["source"]}
+        if is_bilingual:
+            out["es"] = es
 
-    with open(args.output, "w", encoding="utf-8") as fout:
-        for gn_raw, es_raw in tqdm(all_pairs, desc="Normalizando"):
-            # Normalize Guarani side
-            gn = normalize(gn_raw)
-            # Spanish side: basic cleanup (strip whitespace, NFC)
-            es = es_raw.strip()
+        kept.append(out)
+        source_kept[rec["source"]] = source_kept.get(rec["source"], 0) + 1
 
-            if not is_valid_pair(gn, es):
-                filtered += 1
-                continue
+    # ── 3. Write output ──────────────────────────────────────────
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as fout:
+        for rec in kept:
+            fout.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
-            # Dedup by Guarani text
-            dedup_key = gn.lower()
-            if dedup_key in seen:
-                filtered += 1
-                continue
-            seen.add(dedup_key)
+    # ── 4. Summary ───────────────────────────────────────────────
+    print("\n" + "=" * 60)
+    print("Resumen")
+    print("=" * 60)
 
-            record = {"gn": gn, "es": es}
-            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
-            kept += 1
+    print(f"\n{'Fuente':<20} {'Leidos':>10} {'Escritos':>10}")
+    print("-" * 42)
+    for label in stats:
+        raw = stats[label]["raw"]
+        # Map label to source name used in records
+        source_name_map = {
+            "jojajovai_csv": "jojajovai",
+            "jojajovai_hf": "jojajovai",
+            "gov_es_gn": "gov",
+            "gov_gn_es": "gov",
+            "gongora": "gongora",
+            "tatoeba": "tatoeba",
+            "guaspa": "guaspa",
+        }
+        print(f"  {label:<18} {raw:>10}")
 
-    print(f"\nResultados:")
-    print(f"  Pares validos: {kept}")
-    print(f"  Filtrados/duplicados: {filtered}")
+    print("-" * 42)
+    print(f"\n  Registros por source en salida:")
+    for src, cnt in sorted(source_kept.items(), key=lambda x: -x[1]):
+        print(f"    {src:<18} {cnt:>10}")
 
-    if args.output.exists():
-        size_mb = args.output.stat().st_size / (1 << 20)
-        print(f"\nGuardado: {args.output} ({size_mb:.1f} MB)")
+    total_kept = len(kept)
+    bilingual = sum(1 for r in kept if "es" in r)
+    monolingual = total_kept - bilingual
+
+    print(f"\n  Total leidos:        {total_raw:>10}")
+    print(f"  Filtrados (<{MIN_WORDS} words): {filtered_short:>10}")
+    print(f"  Duplicados:          {dupes:>10}")
+    print(f"  Total escritos:      {total_kept:>10}")
+    print(f"    - bilingues:       {bilingual:>10}")
+    print(f"    - monolingues gn:  {monolingual:>10}")
+
+    if OUTPUT_PATH.exists():
+        size_mb = OUTPUT_PATH.stat().st_size / (1 << 20)
+        print(f"\n  Archivo: {OUTPUT_PATH}")
+        print(f"  Tamano:  {size_mb:.2f} MB")
+
+    print()
 
 
 if __name__ == "__main__":

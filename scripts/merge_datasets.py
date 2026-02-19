@@ -1,383 +1,298 @@
-"""Merge all processed datasets into final train/val/test splits for GuaraniLM.
+"""Merge all processed data into final train/val/test splits.
 
-Combines:
-  - CPT data: wikipedia + culturax + parallel text + augmented NLLB
-  - SFT data: instruction samples
+Produces:
+  - data/processed/cpt_train.jsonl  — Continual Pre-Training data
+  - data/processed/cpt_val.jsonl    — CPT validation
+  - data/processed/sft_train.jsonl  — SFT instruction data
+  - data/processed/sft_val.jsonl    — SFT validation
+  - data/processed/test.jsonl       — Held-out test set (CPT + eval benchmarks)
 
-Creates:
-  - data/processed/cpt_train.jsonl, cpt_val.jsonl, cpt_test.jsonl
-  - data/processed/sft_train.jsonl, sft_val.jsonl, sft_test.jsonl
-
-Split ratio: 90/5/5 (train/val/test)
-Reports token counts and dataset statistics.
+CPT data sources (with upsampling weights):
+  - Wikipedia (cleaned)         weight=3  (high quality)
+  - HPLT 2.0                   weight=1  (web crawl)
+  - CC-100                      weight=1  (web crawl)
+  - Leipzig                     weight=2  (curated sentences)
+  - Parallel (gn+es sides)      weight=2  (bilingual)
+  - Gongora Tweets              weight=1  (social media)
+  - Alpaca (text portions)      weight=1  (instruction text)
 """
 
 from __future__ import annotations
 
-import argparse
+import csv
+import hashlib
 import json
 import random
 import sys
+import tarfile
 from pathlib import Path
 
-from tqdm import tqdm
-
-# Ensure scripts/ is importable
 _SCRIPT_DIR = Path(__file__).resolve().parent
-if str(_SCRIPT_DIR) not in sys.path:
-    sys.path.insert(0, str(_SCRIPT_DIR))
-
 PROJECT_ROOT = _SCRIPT_DIR.parent
-INTERIM_DIR = PROJECT_ROOT / "data" / "interim"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
+RAW_DIR = PROJECT_ROOT / "data" / "raw"
 
-# CPT source files
-CPT_SOURCES = {
-    "wikipedia": INTERIM_DIR / "wikipedia_gn.jsonl",
-    "culturax": INTERIM_DIR / "culturax_gn.jsonl",
-    "parallel": INTERIM_DIR / "parallel_gn_es.jsonl",
-    "augmented": INTERIM_DIR / "augmented_nllb.jsonl",
-}
-
-# SFT source files
-SFT_SOURCES = {
-    "instructions": PROCESSED_DIR / "instructions.jsonl",
-}
-
-# Default split ratios
-TRAIN_RATIO = 0.90
 VAL_RATIO = 0.05
 TEST_RATIO = 0.05
+SEED = 42
 
 
-# ---------------------------------------------------------------------------
-# Loading and splitting
-# ---------------------------------------------------------------------------
+def _text_hash(text: str) -> str:
+    return hashlib.md5(text.strip().lower().encode("utf-8")).hexdigest()
 
 
-def load_jsonl(path: Path) -> list[dict]:
-    """Load all records from a JSONL file."""
-    records: list[dict] = []
+def load_jsonl(path: Path, text_field: str = "text", min_words: int = 5) -> list[dict]:
+    records = []
     if not path.exists():
+        print(f"  [warn] {path.name} no encontrado, saltando.")
         return records
-
-    with open(path, "r", encoding="utf-8") as fh:
-        for line in fh:
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
             line = line.strip()
             if not line:
                 continue
             try:
-                records.append(json.loads(line))
+                obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
-
+            text = obj.get(text_field, "")
+            if text and len(text.split()) >= min_words:
+                records.append(obj)
     return records
 
 
-def write_jsonl(records: list[dict], path: Path) -> None:
-    """Write records to a JSONL file."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
-        for record in records:
-            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+def load_compressed_text(path: Path) -> list[dict]:
+    import bz2
+    import lzma
+
+    records = []
+    if not path.exists():
+        print(f"  [warn] {path.name} no encontrado, saltando.")
+        return records
+
+    opener = bz2.open if path.suffix == ".bz2" else lzma.open
+    with opener(path, "rt", encoding="utf-8", errors="replace") as f:
+        for line in f:
+            text = line.strip()
+            if text and len(text.split()) >= 5:
+                records.append({"text": text, "source": path.stem})
+    return records
+
+
+def upsample(records: list[dict], weight: int) -> list[dict]:
+    if weight <= 1:
+        return list(records)
+    return records * weight
+
+
+def deduplicate(records: list[dict], text_field: str = "text") -> list[dict]:
+    seen = set()
+    unique = []
+    for rec in records:
+        h = _text_hash(rec.get(text_field, ""))
+        if h not in seen:
+            seen.add(h)
+            unique.append(rec)
+    return unique
 
 
 def split_data(
-    records: list[dict],
-    train_ratio: float,
-    val_ratio: float,
-    test_ratio: float,
+    records: list[dict], val_ratio: float, test_ratio: float, seed: int
 ) -> tuple[list[dict], list[dict], list[dict]]:
-    """Split records into train/val/test sets."""
+    rng = random.Random(seed)
+    rng.shuffle(records)
     n = len(records)
-    n_val = max(1, int(n * val_ratio))
-    n_test = max(1, int(n * test_ratio))
-    n_train = n - n_val - n_test
-
-    # Ensure at least 1 sample in each split
-    if n < 3:
-        return records, records, records
-
-    train = records[:n_train]
-    val = records[n_train : n_train + n_val]
-    test = records[n_train + n_val :]
-
+    n_test = int(n * test_ratio)
+    n_val = int(n * val_ratio)
+    test = records[:n_test]
+    val = records[n_test : n_test + n_val]
+    train = records[n_test + n_val :]
     return train, val, test
 
 
-# ---------------------------------------------------------------------------
-# Token counting (approximate)
-# ---------------------------------------------------------------------------
-
-
-def count_tokens_approx(records: list[dict]) -> int:
-    """Approximate token count by whitespace splitting.
-
-    For CPT records, counts the 'text' field (or 'gn' + 'es' for parallel).
-    For SFT records, counts all message contents.
-    """
-    total = 0
-
-    for record in records:
-        if "messages" in record:
-            # SFT format
-            for msg in record["messages"]:
-                content = msg.get("content", "")
-                total += len(content.split())
-        elif "text" in record:
-            total += len(record["text"].split())
-        else:
-            # Parallel pairs or other
-            for key in ("gn", "es", "text"):
-                val = record.get(key, "")
-                if val:
-                    total += len(val.split())
-
-    return total
-
-
-def try_exact_token_count(records: list[dict], max_sample: int = 5000) -> int | None:
-    """Try to count tokens using the Qwen tokenizer. Returns None if unavailable."""
-    try:
-        from transformers import AutoTokenizer
-    except ImportError:
-        return None
-
-    try:
-        tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-0.5B", trust_remote_code=True)
-    except Exception:
-        return None
-
-    # Sample if dataset is large
-    sample = records[:max_sample] if len(records) > max_sample else records
-    total = 0
-
-    for record in sample:
-        texts = []
-        if "messages" in record:
-            for msg in record["messages"]:
-                texts.append(msg.get("content", ""))
-        elif "text" in record:
-            texts.append(record["text"])
-        else:
-            for key in ("gn", "es"):
-                if key in record:
-                    texts.append(record[key])
-
-        for text in texts:
-            if text:
-                total += len(tokenizer.encode(text, add_special_tokens=False))
-
-    # Extrapolate if sampled
-    if len(records) > max_sample:
-        total = int(total * (len(records) / max_sample))
-
-    return total
-
-
-# ---------------------------------------------------------------------------
-# CPT data preparation
-# ---------------------------------------------------------------------------
-
-
-def prepare_cpt_record(record: dict) -> dict:
-    """Normalize a record into CPT format: {"text": "..."}."""
-    if "text" in record:
-        return {"text": record["text"]}
-
-    # Parallel pairs -> concatenate as bilingual text
-    parts = []
-    if "gn" in record:
-        parts.append(record["gn"])
-    if "es" in record:
-        parts.append(record["es"])
-
-    if parts:
-        return {"text": "\n".join(parts)}
-
-    # Fallback: serialize the whole record
-    return {"text": json.dumps(record, ensure_ascii=False)}
-
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Combina todos los datasets procesados en splits train/val/test."
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=PROCESSED_DIR,
-        help=f"Directorio de salida (default: {PROCESSED_DIR}).",
-    )
-    parser.add_argument(
-        "--train-ratio",
-        type=float,
-        default=TRAIN_RATIO,
-        help=f"Ratio de train split (default: {TRAIN_RATIO}).",
-    )
-    parser.add_argument(
-        "--val-ratio",
-        type=float,
-        default=VAL_RATIO,
-        help=f"Ratio de validation split (default: {VAL_RATIO}).",
-    )
-    parser.add_argument(
-        "--test-ratio",
-        type=float,
-        default=TEST_RATIO,
-        help=f"Ratio de test split (default: {TEST_RATIO}).",
-    )
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=42,
-        help="Semilla aleatoria para reproducibilidad (default: 42).",
-    )
-    parser.add_argument(
-        "--count-tokens",
-        action="store_true",
-        help="Contar tokens exactos con el tokenizer Qwen (mas lento).",
-    )
-    return parser.parse_args()
+def write_jsonl(records: list[dict], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        for rec in records:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
 
 def main() -> None:
-    args = parse_args()
-    random.seed(args.seed)
-
-    # Validate ratios
-    total_ratio = args.train_ratio + args.val_ratio + args.test_ratio
-    if abs(total_ratio - 1.0) > 0.01:
-        print(f"[error] Los ratios deben sumar 1.0 (actual: {total_ratio:.2f})")
-        sys.exit(1)
-
-    out_dir = args.output_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    print("GuaraniLM - Merge de datasets")
-    print(f"  Output: {out_dir}")
-    print(f"  Split: {args.train_ratio:.0%} / {args.val_ratio:.0%} / {args.test_ratio:.0%}")
-
-    # -----------------------------------------------------------------------
-    # CPT datasets
-    # -----------------------------------------------------------------------
-    print("\n" + "=" * 60)
-    print("  CONTINUAL PRE-TRAINING (CPT)")
+    print("=" * 60)
+    print("  GuaraniLM - Merge Datasets")
     print("=" * 60)
 
-    cpt_all: list[dict] = []
-    source_counts: dict[str, int] = {}
+    # ===== CPT DATA =====
+    print("\n--- CPT: Cargando fuentes ---")
+    cpt_records: list[dict] = []
 
-    for name, path in CPT_SOURCES.items():
-        records = load_jsonl(path)
-        source_counts[name] = len(records)
-        if records:
-            print(f"  {name}: {len(records):,} registros ({path.name})")
-            cpt_all.extend(prepare_cpt_record(r) for r in records)
-        else:
-            print(f"  {name}: [no encontrado] ({path})")
+    # 1. Wikipedia cleaned
+    wiki_path = PROCESSED_DIR / "wikipedia_clean.jsonl"
+    wiki = load_jsonl(wiki_path, "text")
+    print(f"  Wikipedia:     {len(wiki):>8,} registros (weight=3)")
+    cpt_records.extend(upsample(wiki, 3))
 
-    if cpt_all:
-        random.shuffle(cpt_all)
-        cpt_train, cpt_val, cpt_test = split_data(
-            cpt_all, args.train_ratio, args.val_ratio, args.test_ratio
-        )
+    # 2. HPLT 2.0
+    hplt_path = RAW_DIR / "hplt2" / "hplt2_cleaned.jsonl"
+    hplt = load_jsonl(hplt_path, "text")
+    print(f"  HPLT 2.0:      {len(hplt):>8,} registros (weight=1)")
+    cpt_records.extend(hplt)
 
-        write_jsonl(cpt_train, out_dir / "cpt_train.jsonl")
-        write_jsonl(cpt_val, out_dir / "cpt_val.jsonl")
-        write_jsonl(cpt_test, out_dir / "cpt_test.jsonl")
+    # 3. CC-100
+    cc100_path = RAW_DIR / "cc100_gn.txt.xz"
+    cc100 = load_compressed_text(cc100_path)
+    print(f"  CC-100:        {len(cc100):>8,} registros (weight=1)")
+    cpt_records.extend(cc100)
 
-        print(f"\n  CPT splits:")
-        print(f"    Train: {len(cpt_train):,}")
-        print(f"    Val:   {len(cpt_val):,}")
-        print(f"    Test:  {len(cpt_test):,}")
-        print(f"    Total: {len(cpt_all):,}")
+    # 4. Leipzig
+    leipzig: list[dict] = []
+    leipzig_path = RAW_DIR / "grn_community_2017.tar.gz"
+    if leipzig_path.exists():
+        with tarfile.open(leipzig_path, "r:gz") as tar:
+            for member in tar.getmembers():
+                if member.name.endswith("-sentences.txt"):
+                    f = tar.extractfile(member)
+                    if f:
+                        for line in f:
+                            text = line.decode("utf-8", errors="replace").strip()
+                            parts = text.split("\t", 1)
+                            if len(parts) > 1 and len(parts[1].split()) >= 5:
+                                leipzig.append({"text": parts[1], "source": "leipzig"})
+    print(f"  Leipzig:       {len(leipzig):>8,} registros (weight=2)")
+    cpt_records.extend(upsample(leipzig, 2))
 
-        # Token counts
-        approx_tokens = count_tokens_approx(cpt_all)
-        print(f"\n  Tokens CPT (approx words): ~{approx_tokens:,}")
-
-        if args.count_tokens:
-            exact = try_exact_token_count(cpt_all)
-            if exact is not None:
-                print(f"  Tokens CPT (Qwen tokenizer): ~{exact:,}")
+    # 5. Parallel data (both sides for CPT)
+    parallel_path = PROCESSED_DIR / "parallel_all.jsonl"
+    parallel: list[dict] = []
+    if parallel_path.exists():
+        with open(parallel_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                gn = obj.get("gn", "")
+                if gn and len(gn.split()) >= 3:
+                    parallel.append({"text": gn, "source": "parallel_gn"})
+                es = obj.get("es", "")
+                if es and len(es.split()) >= 3:
+                    parallel.append({"text": es, "source": "parallel_es"})
     else:
-        print("\n  [warn] No se encontraron datos CPT.")
+        print(f"  [warn] parallel_all.jsonl no existe. Ejecuta prepare_parallel.py primero.")
+    print(f"  Parallel:      {len(parallel):>8,} registros (weight=2)")
+    cpt_records.extend(upsample(parallel, 2))
 
-    # -----------------------------------------------------------------------
-    # SFT datasets
-    # -----------------------------------------------------------------------
-    print("\n" + "=" * 60)
-    print("  SUPERVISED FINE-TUNING (SFT)")
-    print("=" * 60)
+    # 6. Gongora Tweets
+    tweets: list[dict] = []
+    tweets_dir = RAW_DIR / "gongora" / "giossa-gongora-guarani-2021-main" / "Tweets_set"
+    if tweets_dir.exists():
+        for csv_file in sorted(tweets_dir.glob("*.csv")):
+            with open(csv_file, "r", encoding="utf-8", errors="replace") as fh:
+                reader = csv.DictReader(fh)
+                for row in reader:
+                    text = row.get("Tweet", "")
+                    if text and len(text.split()) >= 3:
+                        tweets.append({"text": text, "source": "gongora_tweets"})
+    print(f"  Tweets:        {len(tweets):>8,} registros (weight=1)")
+    cpt_records.extend(tweets)
 
-    sft_all: list[dict] = []
+    # 7. Alpaca (monolingual portions)
+    alpaca_path = RAW_DIR / "alpaca_guarani" / "alpaca_guarani.jsonl"
+    alpaca: list[dict] = []
+    if alpaca_path.exists():
+        with open(alpaca_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                parts = []
+                for field in ["instruction", "input", "output"]:
+                    v = obj.get(field, "")
+                    if v:
+                        parts.append(v)
+                text = " ".join(parts)
+                if len(text.split()) >= 5:
+                    alpaca.append({"text": text, "source": "alpaca_guarani"})
+    print(f"  Alpaca:        {len(alpaca):>8,} registros (weight=1)")
+    cpt_records.extend(alpaca)
 
-    for name, path in SFT_SOURCES.items():
-        records = load_jsonl(path)
-        if records:
-            print(f"  {name}: {len(records):,} registros ({path.name})")
-            sft_all.extend(records)
-        else:
-            print(f"  {name}: [no encontrado] ({path})")
+    # Deduplicate CPT
+    print(f"\n  CPT antes de dedup: {len(cpt_records):,}")
+    cpt_records = deduplicate(cpt_records)
+    print(f"  CPT despues de dedup: {len(cpt_records):,}")
 
-    if sft_all:
-        random.shuffle(sft_all)
-        sft_train, sft_val, sft_test = split_data(
-            sft_all, args.train_ratio, args.val_ratio, args.test_ratio
-        )
+    # Split CPT
+    cpt_train, cpt_val, cpt_test = split_data(cpt_records, VAL_RATIO, TEST_RATIO, SEED)
 
-        write_jsonl(sft_train, out_dir / "sft_train.jsonl")
-        write_jsonl(sft_val, out_dir / "sft_val.jsonl")
-        write_jsonl(sft_test, out_dir / "sft_test.jsonl")
+    write_jsonl(cpt_train, PROCESSED_DIR / "cpt_train.jsonl")
+    write_jsonl(cpt_val, PROCESSED_DIR / "cpt_val.jsonl")
+    print(f"  CPT train: {len(cpt_train):,}  |  val: {len(cpt_val):,}")
 
-        print(f"\n  SFT splits:")
-        print(f"    Train: {len(sft_train):,}")
-        print(f"    Val:   {len(sft_val):,}")
-        print(f"    Test:  {len(sft_test):,}")
-        print(f"    Total: {len(sft_all):,}")
+    # ===== SFT DATA =====
+    print("\n--- SFT: Cargando instrucciones ---")
+    sft_path = PROCESSED_DIR / "sft_all.jsonl"
+    sft_train = []
+    sft_val = []
+    if sft_path.exists():
+        sft_records = []
+        with open(sft_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    sft_records.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
 
-        # Token counts
-        approx_tokens = count_tokens_approx(sft_all)
-        print(f"\n  Tokens SFT (approx words): ~{approx_tokens:,}")
+        print(f"  SFT total: {len(sft_records):,}")
 
-        if args.count_tokens:
-            exact = try_exact_token_count(sft_all)
-            if exact is not None:
-                print(f"  Tokens SFT (Qwen tokenizer): ~{exact:,}")
+        rng = random.Random(SEED)
+        rng.shuffle(sft_records)
+        n_sft_val = int(len(sft_records) * VAL_RATIO)
+        sft_val = sft_records[:n_sft_val]
+        sft_train = sft_records[n_sft_val:]
+
+        write_jsonl(sft_train, PROCESSED_DIR / "sft_train.jsonl")
+        write_jsonl(sft_val, PROCESSED_DIR / "sft_val.jsonl")
+        print(f"  SFT train: {len(sft_train):,}  |  val: {len(sft_val):,}")
     else:
-        print("\n  [warn] No se encontraron datos SFT.")
+        print(f"  [warn] {sft_path.name} no existe. Ejecuta prepare_instructions.py primero.")
 
-    # -----------------------------------------------------------------------
-    # Summary
-    # -----------------------------------------------------------------------
+    # ===== TEST SET =====
+    test_records = cpt_test
+    for eval_file in ["flores200.jsonl", "belebele.jsonl"]:
+        eval_path = RAW_DIR / "eval" / eval_file
+        if eval_path.exists():
+            eval_data = load_jsonl(eval_path, "text", min_words=0)
+            test_records.extend(eval_data)
+            print(f"  Eval {eval_file}: {len(eval_data):,} registros agregados a test")
+
+    write_jsonl(test_records, PROCESSED_DIR / "test.jsonl")
+    print(f"  Test total: {len(test_records):,}")
+
+    # ===== SUMMARY =====
     print("\n" + "=" * 60)
     print("  RESUMEN FINAL")
     print("=" * 60)
-
-    total_records = len(cpt_all) + len(sft_all)
-    print(f"\n  Registros totales: {total_records:,}")
-    print(f"    CPT: {len(cpt_all):,}")
-    print(f"    SFT: {len(sft_all):,}")
-
-    print(f"\n  Fuentes CPT:")
-    for name, count in source_counts.items():
-        print(f"    {name}: {count:,}")
-
-    print(f"\n  Archivos generados en {out_dir}:")
-    for f in sorted(out_dir.glob("*.jsonl")):
-        size_mb = f.stat().st_size / (1 << 20)
-        # Count lines
-        with open(f, "r", encoding="utf-8") as fh:
-            n_lines = sum(1 for _ in fh)
-        print(f"    {f.name}: {n_lines:,} registros ({size_mb:.1f} MB)")
-
-    print("\n  Merge completado.")
+    total_cpt_words = sum(len(r.get("text", "").split()) for r in cpt_train)
+    est_cpt_tokens = int(total_cpt_words * 1.3)
+    print(f"  CPT train:  {len(cpt_train):>10,} registros  ~{est_cpt_tokens:>12,} tokens")
+    if sft_train:
+        print(f"  SFT train:  {len(sft_train):>10,} registros")
+    print(f"  Val (CPT):  {len(cpt_val):>10,} registros")
+    if sft_val:
+        print(f"  Val (SFT):  {len(sft_val):>10,} registros")
+    print(f"  Test:       {len(test_records):>10,} registros")
+    print(f"\n  Archivos en: {PROCESSED_DIR}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":

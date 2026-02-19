@@ -21,8 +21,8 @@ if str(_SCRIPT_DIR) not in sys.path:
 
 PROJECT_ROOT = _SCRIPT_DIR.parent
 
-DEFAULT_GN_INPUT = PROJECT_ROOT / "data" / "interim" / "wikipedia_gn.jsonl"
-DEFAULT_ES_INPUT = PROJECT_ROOT / "data" / "raw" / "spanish_snippets.jsonl"
+DEFAULT_GN_INPUT = PROJECT_ROOT / "data" / "raw" / "wikipedia_hf" / "wikipedia_gn.jsonl"
+DEFAULT_ES_INPUT = PROJECT_ROOT / "data" / "raw" / "jojajovai_hf" / "jojajovai_hf.jsonl"
 
 # Fallback sample texts if no files available
 SAMPLE_GN = [
@@ -312,8 +312,8 @@ def main() -> None:
         es_texts = SAMPLE_ES
         print(f"  Usando textos de muestra incorporados")
     else:
-        gn_texts = load_texts_from_jsonl(args.gn_input, args.max_texts)
-        es_texts = load_texts_from_jsonl(args.es_input, args.max_texts)
+        gn_texts = load_texts_from_jsonl(args.gn_input, args.max_texts, text_field="text")
+        es_texts = load_texts_from_jsonl(args.es_input, args.max_texts, text_field="es")
 
         if not gn_texts:
             print(f"  [info] Sin textos GN en {args.gn_input}, usando muestras incorporadas")
