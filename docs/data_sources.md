@@ -66,28 +66,36 @@ Hardware objetivo: RTX 4070 Laptop (8GB VRAM), 16GB RAM, Intel Ultra 7 155H
 | 21 | Paraguayologia diccionario | 1,300+ | ~100K | Web (scraping) | ? | Alta | https://paraguayologia.com/diccionario-paraguayo/ |
 | 22 | Paraguayologia traductor | 6,937 pares | ~50K | Web (scraping) | ? | Alta | https://paraguayologia.com/traductor-guarani-espanol/ |
 | 23 | Glosbe GN-ES | 6,992 frases + 149K ejemplos | ~500K-1M | Web | ToS restric. | Media | https://es.glosbe.com/gn/es |
+| 24 | Traductor Oficial Gov.py | 1,514 pares (CSV) | ~15K | CSV | Datos Abiertos PY | Muy Alta | https://www.datos.gov.py/dataset/traductor-espanol-guarani |
+
+**Notas sobre Traductor Oficial Gov.py:**
+- CSV descargable directamente: `https://www.datos.gov.py/sites/default/files/traductor-espanol-guarani.csv`
+- El traductor web completo (https://www.paraguay.gov.py/traductor-guarani) tiene ~15,000 entradas, pero el CSV publico solo contiene 1,514 pares.
+- La Secretaria de Politicas Linguisticas (SPL) tambien mantiene un diccionario en https://spl.gov.py/ (requiere scraping).
+- Calidad MUY alta: traducciones oficiales del gobierno, validadas por linguistas de la SPL.
+- Licencia abierta: publicado en datos.gov.py bajo datos abiertos de Paraguay.
 
 ### 1.5 Fuentes por scrapear (no descargadas aun)
 
 | # | Fuente | Estimacion | Tipo | Calidad | URL |
 |---|--------|-----------|------|---------|-----|
-| 24 | Orembae (Biblioteca Virtual) | 14,000+ poemas/escritos, ~2-5M tokens | Monolingue GN | Alta | https://www.orembae.org.py |
-| 25 | ABC Color Remiandy | Miles de articulos | Paralelo GN-ES | Alta | https://www.abc.com.py/especiales/remiandu/ |
+| 25 | Orembae (Biblioteca Virtual) | 14,000+ poemas/escritos, ~2-5M tokens | Monolingue GN | Alta | https://www.orembae.org.py |
+| 26 | ABC Color Remiandy | Miles de articulos | Paralelo GN-ES | Alta | https://www.abc.com.py/especiales/remiandu/ |
 
 ### 1.6 Augmentation sintetico
 
 | # | Fuente | Potencial | Tokens est. | Calidad | URL |
 |---|--------|-----------|-------------|---------|-----|
-| 26 | NLLB-200 distilled 600M | Forward + back-translation | ~2-5M | Media | https://huggingface.co/facebook/nllb-200-distilled-600M |
-| 27 | Grammar augmentation (Baladon) | Oraciones sinteticas por gramatica | ~1M | Baja | https://github.com/AlexisBaladon/SyntaxGrammar-es-gn |
+| 27 | NLLB-200 distilled 600M | Forward + back-translation | ~2-5M | Media | https://huggingface.co/facebook/nllb-200-distilled-600M |
+| 28 | Grammar augmentation (Baladon) | Oraciones sinteticas por gramatica | ~1M | Baja | https://github.com/AlexisBaladon/SyntaxGrammar-es-gn |
 
 ### 1.7 Benchmarks de evaluacion (NO para training)
 
 | # | Fuente | Registros | Uso | URL |
 |---|--------|-----------|-----|-----|
-| 28 | FLORES-200 | 2,009 oraciones | Eval traduccion | https://huggingface.co/datasets/facebook/flores |
-| 29 | Belebele | ~900 QA | Eval comprension | https://huggingface.co/datasets/facebook/belebele |
-| 30 | NLLB-Seed | 6,193 pares | Eval traduccion | https://github.com/facebookresearch/flores |
+| 29 | FLORES-200 | 2,009 oraciones | Eval traduccion | https://huggingface.co/datasets/facebook/flores |
+| 30 | Belebele | ~900 QA | Eval comprension | https://huggingface.co/datasets/facebook/belebele |
+| 31 | NLLB-Seed | 6,193 pares | Eval traduccion | https://github.com/facebookresearch/flores |
 
 ### 1.8 Fuentes descartadas
 
@@ -388,6 +396,7 @@ Dia 14: Export y publicacion
 | Leipzig | Complemento monolingue |
 | NLLB augmentation | Escalar datos paralelos |
 | FLORES/Belebele/NLLB-Seed | Evaluacion |
+| Traductor Oficial Gov.py | Traducciones oficiales validadas por SPL |
 
 ### USAR CON CAUTELA
 

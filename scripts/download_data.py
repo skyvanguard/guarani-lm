@@ -10,6 +10,7 @@ Confirmed sources (see docs/data_sources.md for full details):
   - mmaguero datasets (sentiment, humor, offensive, emotion)
   - Alpaca-Guarani (52K instructions, low quality)
   - GUA-SPA 2023 shared task
+  - Official Paraguay Gov translator (1.5K pairs, datos abiertos)
   - NLLB-Seed (6K professional pairs)
   - FLORES-200 + Belebele (evaluation benchmarks)
   - Tatoeba sentences
@@ -42,6 +43,10 @@ JOJAJOVAI_REPO_ZIP = (
 
 GONGORA_REPO_ZIP = (
     "https://github.com/sgongora27/giossa-gongora-guarani-2021/archive/refs/heads/main.zip"
+)
+
+GOV_PY_TRADUCTOR_CSV = (
+    "https://www.datos.gov.py/sites/default/files/traductor-espanol-guarani.csv"
 )
 
 # HuggingFace datasets config: {key: {path, name?, split, subdir}}
@@ -314,6 +319,13 @@ def download_tatoeba() -> None:
     download_file(url, dest, desc="Tatoeba grn")
 
 
+def download_gov_traductor() -> None:
+    """Download official Paraguay government ES-GN translator CSV (1,514 pairs)."""
+    print("\n=== Traductor Oficial Gov.py (datos abiertos) ===")
+    dest = RAW_DIR / "traductor_gov_py.csv"
+    download_file(GOV_PY_TRADUCTOR_CSV, dest, desc="Traductor oficial Gov.py")
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -330,6 +342,7 @@ ALL_SOURCES = [
     "gua_spa",
     "gongora",
     "tatoeba",
+    "gov_traductor",
     "eval",
 ]
 
@@ -393,6 +406,7 @@ def main() -> None:
         "gua_spa": download_gua_spa,
         "gongora": download_gongora,
         "tatoeba": download_tatoeba,
+        "gov_traductor": download_gov_traductor,
         "eval": download_eval_benchmarks,
     }
 
