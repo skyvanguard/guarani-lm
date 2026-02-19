@@ -113,7 +113,7 @@ HF_DATASETS = {
     # === Evaluation benchmarks ===
     "flores200": {
         "path": "openlanguagedata/flores_plus",
-        "name": "grn_Latn",
+        "name": "gug_Latn",
         "split": "devtest",
         "desc": "FLORES+ Guarani eval set",
     },
