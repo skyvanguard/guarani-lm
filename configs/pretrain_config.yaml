@@ -4,13 +4,13 @@
 model:
   name: "unsloth/Qwen2.5-0.5B"
   load_in_4bit: true
-  max_seq_length: 2048
+  max_seq_length: 1024
   dtype: null  # auto-detect
 
 lora:
-  r: 128
-  lora_alpha: 64
-  lora_dropout: 0.05
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.0  # Unsloth fast patching requires dropout=0
   target_modules:
     - "q_proj"
     - "k_proj"
@@ -19,16 +19,15 @@ lora:
     - "gate_proj"
     - "up_proj"
     - "down_proj"
-    - "embed_tokens"
-    - "lm_head"
+    # embed_tokens/lm_head removed: disk offload makes training too slow on 8GB VRAM
   bias: "none"
   use_rslora: true
 
 training:
   output_dir: "checkpoints/cpt"
-  num_train_epochs: 3
-  per_device_train_batch_size: 4
-  gradient_accumulation_steps: 8  # effective batch = 32
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 16  # effective batch = 32
   learning_rate: 5.0e-5
   embedding_learning_rate: 5.0e-6
   warmup_ratio: 0.05
@@ -39,7 +38,7 @@ training:
   bf16: true
   gradient_checkpointing: true
   logging_steps: 10
-  save_steps: 500
+  save_steps: 400
   save_total_limit: 3
   seed: 42
   dataloader_num_workers: 2
@@ -49,7 +48,7 @@ data:
   train_file: "data/processed/cpt_train.jsonl"
   validation_file: "data/processed/cpt_val.jsonl"
   text_field: "text"
-  max_length: 2048
+  max_length: 1024
   packing: true
 
 wandb:

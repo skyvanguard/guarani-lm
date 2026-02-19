@@ -4,13 +4,13 @@
 model:
   name: "checkpoints/cpt/final"  # merged CPT model
   load_in_4bit: true
-  max_seq_length: 2048
+  max_seq_length: 1024
   dtype: null
 
 lora:
-  r: 64
+  r: 32
   lora_alpha: 32
-  lora_dropout: 0.05
+  lora_dropout: 0.0  # Unsloth fast patching requires dropout=0
   target_modules:
     - "q_proj"
     - "k_proj"
@@ -25,9 +25,9 @@ lora:
 
 training:
   output_dir: "checkpoints/sft"
-  num_train_epochs: 3
-  per_device_train_batch_size: 4
-  gradient_accumulation_steps: 4  # effective batch = 16
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8  # effective batch = 16
   learning_rate: 2.0e-5
   warmup_ratio: 0.05
   weight_decay: 0.01
@@ -47,7 +47,7 @@ data:
   train_file: "data/processed/sft_train.jsonl"
   validation_file: "data/processed/sft_val.jsonl"
   chat_template: "chatml"
-  max_length: 2048
+  max_length: 1024
 
 sft:
   # Distribution of instruction types (for reference)
@@ -57,7 +57,7 @@ sft:
   # 5% sentiment analysis
   # 5.5% classification (humor, offense, emotion)
   # 4.5% text generation in Guaraní
-  packing: false
+  packing: true
   neftune_noise_alpha: 5  # NEFTune for better generalization
 
 wandb:

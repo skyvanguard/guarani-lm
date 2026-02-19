@@ -95,10 +95,11 @@ def train(config: dict[str, Any]) -> None:
     logger.info("Train: %d samples%s", len(train_dataset),
                 f", Val: {len(eval_dataset)} samples" if eval_dataset else "")
 
-    # --- Build dual-LR optimizer ---
+    # --- Build optimizer ---
     general_lr = train_cfg["learning_rate"]
-    embed_lr = train_cfg.get("embedding_learning_rate", general_lr / 10)
+    embed_lr = train_cfg.get("embedding_learning_rate")
 
+    # If we have embed_tokens/lm_head in target_modules, use dual-LR
     embedding_params = []
     general_params = []
     for name, param in model.named_parameters():
@@ -109,13 +110,17 @@ def train(config: dict[str, Any]) -> None:
         else:
             general_params.append(param)
 
-    logger.info("Optimizer: %d general (lr=%.2e), %d embed (lr=%.2e)",
-                len(general_params), general_lr, len(embedding_params), embed_lr)
-
-    optimizer = torch.optim.AdamW([
-        {"params": general_params, "lr": general_lr},
-        {"params": embedding_params, "lr": embed_lr},
-    ], weight_decay=train_cfg["weight_decay"])
+    optimizer = None
+    if embedding_params and embed_lr:
+        logger.info("Optimizer: %d general (lr=%.2e), %d embed (lr=%.2e)",
+                    len(general_params), general_lr, len(embedding_params), embed_lr)
+        optimizer = torch.optim.AdamW([
+            {"params": general_params, "lr": general_lr},
+            {"params": embedding_params, "lr": embed_lr},
+        ], weight_decay=train_cfg["weight_decay"])
+    else:
+        logger.info("Optimizer: adamw_8bit, %d trainable params (lr=%.2e)",
+                    len(general_params) + len(embedding_params), general_lr)
 
     # --- Training config ---
     output_dir = Path(train_cfg["output_dir"])
@@ -147,14 +152,17 @@ def train(config: dict[str, Any]) -> None:
     )
 
     # --- Train ---
-    trainer = SFTTrainer(
+    trainer_kwargs = dict(
         model=model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         args=sft_config,
-        optimizers=(optimizer, None),
     )
+    if optimizer is not None:
+        trainer_kwargs["optimizers"] = (optimizer, None)
+
+    trainer = SFTTrainer(**trainer_kwargs)
 
     logger.info("Starting Continual Pre-Training...")
     result = trainer.train()
