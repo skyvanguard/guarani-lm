@@ -118,6 +118,12 @@ wandb/
 # HuggingFace cache
 .cache/
 
+# Unsloth cache
+unsloth_compiled_cache/
+
+# Claude Code
+.claude/
+
 # Misc
 *.bak
 *.tmp
