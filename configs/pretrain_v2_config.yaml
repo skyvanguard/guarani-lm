@@ -1,0 +1,55 @@
+# Continual Pre-Training v2 Configuration
+# Re-train with 3 epochs for better Guaraní language understanding
+
+model:
+  name: "unsloth/Qwen2.5-0.5B"
+  load_in_4bit: true
+  max_seq_length: 1024
+  dtype: null  # auto-detect
+
+lora:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.0  # Unsloth fast patching requires dropout=0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: true
+
+training:
+  output_dir: "checkpoints/cpt_v2"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 16  # effective batch = 32
+  learning_rate: 5.0e-5
+  embedding_learning_rate: 5.0e-6
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: 3
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "none"
+
+data:
+  train_file: "data/processed/cpt_train.jsonl"
+  validation_file: "data/processed/cpt_val.jsonl"
+  text_field: "text"
+  max_length: 1024
+  packing: true
+
+wandb:
+  project: "guarani-lm"
+  run_name: "cpt-v2-qwen05b-3ep"

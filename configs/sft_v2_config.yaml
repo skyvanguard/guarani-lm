@@ -1,0 +1,67 @@
+# SFT v2 Configuration
+# Fine-tune on expanded dataset (249K instructions) for 2 epochs
+
+model:
+  name: "checkpoints/cpt_v2/final"  # v2 CPT checkpoint
+  load_in_4bit: true
+  max_seq_length: 1024
+  dtype: null
+
+lora:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.0  # Unsloth fast patching requires dropout=0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: true
+
+training:
+  output_dir: "checkpoints/sft_v2"
+  num_train_epochs: 2
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8  # effective batch = 16
+  learning_rate: 2.0e-5
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: 3
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "none"
+
+data:
+  train_file: "data/processed/sft_v2_train.jsonl"
+  validation_file: "data/processed/sft_v2_val.jsonl"
+  chat_template: "chatml"
+  max_length: 1024
+
+sft:
+  # v2 distribution:
+  # 27.2% cultura_qa (Guaraní culture Q&A)
+  # 20.5% instruction_jopara (Capibara)
+  # 16.7% instruction_following (Alpaca cleaned)
+  # 14.8% translate_es_gn
+  # 14.8% translate_gn_es
+  # 1.5% storytelling
+  # 1.3% translate_gn_en + linguistic_analysis
+  # ~2% classification (sentiment, humor, offensive, emotion)
+  # 0.2% chat
+  packing: true
+  neftune_noise_alpha: 5
+
+wandb:
+  project: "guarani-lm"
+  run_name: "sft-v2-qwen05b-2ep"
