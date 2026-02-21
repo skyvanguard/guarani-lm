@@ -1,0 +1,148 @@
+{
+  "model_name": "checkpoints/sft/final",
+  "timestamp": "2026-02-20T23:20:40.494976+00:00",
+  "guarani_lm": {
+    "translation_gn_es": {
+      "task": "translation_gn_es",
+      "num_examples": 500,
+      "generation_time_s": 1008.02,
+      "bleu": 1.704,
+      "chrf2": 25.2515,
+      "examples": [
+        {
+          "prompt": "Embohasámi ko guaraní-gui español-pe: Avei, mba'emba'épa ikatu ojejapo ko tavusu ryeppe, Ary ñemomorã rehehápe.",
+          "prediction": "En el mismo año se realizaron las actividades de la Semana Santa en nuestro país, con un programa que incluye los siguientes eventos: 1) La oración universal; 2) El recuerdo a San Roque y su familia; 3) La misa del Señor de la Salud; 4) Las procesiones por la Virgen de la Asunción; 5) Los actos religiosos en honor al Señor de la Paz; 6) En la fiesta de la Virgen de la Merced; 7) La tradición de la Navidad; 8) La celebración de la Fiesta Nacional de la Juventud; 9) La fiesta de la Virgen de la Natividad; 10) La fiesta de la Virgen de la Encarnacion; 11) La fiesta de la Virgen de la Crucifixion; 12) La fiesta de la Virgen de la Resurrección; 13) La fiesta de la Virgen de la Misericordia; 14) La fiesta de la Virgen de la Santísima Trinidad; 15) La fiesta de la Vir",
+          "reference": "Así como, analizar líneas de acción o iniciativas posibles de ser implementadas en el Departamento, en el marco de la Conmemoración del Año."
+        },
+        {
+          "prompt": "Emongueta español-pe: Péicha avei obispo he'i ohecháha ta'anga rupive ha vídeo, ombyasy, ohechávo ochyryry opytávo mymba ha yvyramáta ha umi ka'avo.",
+          "prediction": "Asimismo el obispo señaló que se encontraron en las redes sociales un video de la familia del pastor y una foto con los niños, lo cual provocó preocupaciones por parte de los vecinos.<quote>\n<LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><LM> <LM></LM><",
+          "reference": "Asimismo, el obispo expresó que han visto por fotos y vídeos, con profunda tristeza, como han quedado calcinados tantas especies nativas de la fauna chaqueña y ni hablar de la flora."
+        },
+        {
+          "prompt": "Emongueta español-pe: Jiménez oime ternado Marcos Kohn Gallardo ha Rubén Darío Romero ndive.",
+          "prediction": "Jiménez es el Ternado de Marcos Kohn Gallardo y Rubén Darío Romero.<quote>\nEĞİ\n<LM>que son los nombres del personaje?<LM>Jiménez, Marcos Kohn Gallardo, Rubén Darío Romero.<quote>\n<LM>¿Qué tipo de personajes son estos?<LM>Jiménez es un personaje de la serie “El señor de las teteras”, Marcos Kohn Gallardo es un personaje de la serie “La casa en el cielo” y Rubén Darío Romero es un personaje de la serie “Los pares”.<quote>\n<LM>¿Cuál era su rol con respecto a estas series?<LM>En \"El señor de las teteras\" se encuentra como el protagonista principal, mientras que en \"Las casitas en el cielo\" es el secundario. En \"Los pares\" es el compañero de trabajo de la pareja.<quote>\n<LM>¿Cómo fue tu experiencia en cada uno de esos roles?<LM>Mi experiencia en todos ellos fue similar al de mi personaje principal, pero tenía una gran diferencia entre el personaje secundario y el compañero de trabajo. El personaje secundario estaba más centrada en lo",
+          "reference": "Jiménez estaba ternado con Marcos Kohn Gallardo y Rubén Darío Romero."
+        },
+        {
+          "prompt": "Ehai español-pe ko ñe'ẽ guaraní: Ojerúre umi egresado tome' hi'aguyje ogayguápe ha umi mbo'ehárape, ha upéva ári anitei omboyke iñemoarandu, péva ejercicio de la profesión pukukue.",
+          "prediction": "“Queremos que los egresados tengan un buen trabajo y el resto no quieran trabajar”, dijo el director del centro educativo, Alcides Gómez. “No quería dejar a nadie en su lugar porque yo soy un profesional”. En otro momento, se refirió al hecho de que algunos alumnos tuvierán una carrera más compleja que otros, por lo tanto, no quisieron trabajar con ellos.“Hay mucha gente que quiere ir a estudiar pero nunca llego a hacerlo”, indicó. “Yo quiero ser un profesional” he'i. “Pero si me gusta este tipo de vida, entonces sí puedo seguir trabajando aquí”, afirmó. “Esperamos que todo esto siga así hasta que todos estén bien recuperándose.” El director del centro educativo, Alcides Gómez, comentó que las clases están siendo muy duras para muchos estudiantes debido a que muchas tienen carreras más complicadas que otras, por lo cual no quieren trabajar. “Tengo 10 años como docente y ahora estoy haciendo mis primeros cursos universitarios, pero todavía tengo mucho camino a recorrer”, expresó. “Mi objetivo es ayudar a los niños y jóvenes",
+          "reference": "Pidió a los egresados que sean agradecidos con la familia y con sus formadores, y por sobre todo, no dejar de estudiar a lo largo del ejercicio de la profesión."
+        },
+        {
+          "prompt": "Traduce del guaraní al español: Ombojoaju ponderaciones ojapóva a nivel constitucional y moral.",
+          "prediction": "La ponencia abordará temas de consideración desde el punto de vista de la Constitución Nacional y la moral.ocs 19/07/2018 15:36:45 CEST (GMT -0300) Editado por: Nicanor Rivas | Traducción en Español | Traductor | Traducciones gratis | Traduccion gratuita | traductores online | traducer.com.ar | traduzcion.net | traduci.org | tradukus.eu | traduco.es | tradujereusa.com | traduje.us | tradueperlasur.es | traduca.gov.py | traduclator.ru | traduirweb.co.uk | traduireonline.nl | tradueres.com | traduroalgunos.com | traducomunicacion.com | traduconlinea.com | traducirporque.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com | traducirpermanente.com |",
+          "reference": "Añadió que hay varias “ponderaciones” que hacer a nivel constitucional y moral."
+        }
+      ]
+    },
+    "translation_es_gn": {
+      "task": "translation_es_gn",
+      "num_examples": 500,
+      "generation_time_s": 1162.0,
+      "bleu": 1.4195,
+      "chrf2": 23.1216,
+      "examples": [
+        {
+          "prompt": "Emongueta guaraní-pe: Camilo Soares –extitular de la Secretaría de Emergencia Nacional (SEN) y principal denunciante de las irregularidades en la Municipalidad de Asunción– visitó ABC Cardinal y durante su entrevista negó haber utilizado dinero del cartismo para pagar la campaña política de Avanza País para las elecciones del 2013.",
+          "prediction": "Camilo Soares, extitular de la Secretaría de Emergencia Nacional (SEN) ha'e pete denunciador irregularidad Municipalidad de Asunción rehegua-kuéra ndive. Ko entrevista ogueromandu'a camilo Soares he'i hikuái ne cartismo orekohaguéicha pe campaña política avanza paisa rire.应用查看\n太阳城.com.ar - Tablas de búsqueda\n太阳城.com.ar Ñembohasapyre\n太阳城.com.ar ñembopyahu\n太阳城.com.ar ñemoheñói\n太阳城.com.ar ñehesa’ỹijo\n太阳城.com.ar ñepyrũrã\n太阳城.com.ar ñepytyvõ\n太阳城.com.ar ñemyatyrõ\n太阳城.com.ar ñangareko\n太阳城.com.ar ñande rapichakuéra\n太阳城.com.ar ñane retãyhuete\n太阳城.com.ar ñañekonsentra\n太阳城.com.ar ñamoporãve\n太阳城.com.ar ñamoherakuãvo\n太阳城.com.ar ñamosarambipota\n太阳城.com.ar ñamyengovia\n太阳城.com.ar ñameña",
+          "reference": "Camilo Soares extitular Secretaría de Emergencia Nacional (SEN) ha principal denunciante irregularidad Municipalidad de Asunción-pe oikóva ou ABC Cardinal -pe oñomongeta haguã ha omombe'u mba'éichapa omi cartismo ohepyme'va campaña política Avanza País jeporavo guasu 2013 jave."
+        },
+        {
+          "prompt": "Emongueta guaraní-pe: Reciben a los Reyes Magos, desde Nueva York",
+          "prediction": "Oñembopiro'y hikuái Nueva York-pe, Paraguay gotyo.应用查看\nEĞİassistant\nKo'ã mokir guasu ombojegua Nueva York-pe, Paraguapekuérape.应用查看\n該使用者\nReyes de la Tierra, recién llegados al país, se despidieron del pueblo y lo dejaron en el desierto.应用查看\n獒\nLos Reyes Magos, tras su viaje por las montañas, regresaron hasta el lugar donde vivían sus padres.应用查看\n獒\nEl Rey de los Reyes Magos, después de un largo trayecto, llegó hasta el sitio donde vivía su padre.应用查看\n獒\nLa princesa de los Reyes Magos, cuando salió de casa, fue ataviada con una capa de lana.应用查看\n獒\nUna vez que entró en el bosque, observó cómo los Reyes Magos iban caminando hacia él.应用查看\n獒\nPero no podía creerlo todo lo que veía.应用查看\n獒\n¿Qué tal es tu reino? ¿Cuánto dinero tienes? Otra cosa interesante es que todos ellos son iguales.应用查看",
+          "reference": "Oguah mbohupa Reyes Magos, oúva Nueva York guive"
+        },
+        {
+          "prompt": "Embohasámi ko español-gui guaraní-pe: Señaló que la disposición entra a regir desde este sábado 21 de marzo a las 00:00 e indicó que durará hasta que culmine la cuarentena que aprobó el gobierno del Presidente de la República, Mario Abdo Benítez, que ahora se extendió hasta el 12 de abril.",
+          "prediction": "Omoherakuã disposiciones omohendahague rire ág̃a viernes 21 jasypateĩ ary 2020 arambeve 00:00 peve ha he'i orekoha hikuái umi mba'érepa ojeporu ko'ágã péicha ombopyahuha covid-19 ñemonguera rehe.ocsinapaite ndojegueroviapaha gueteri.应用查看\nAnimations\nAgregaron que en su momento fue un tema importante para los médicos y enfermeros quienes consideraban que era una medida muy eficaz con respecto al control de la pandemia.应用查看\nAnimation\nKo’áĝa ojehecha upe tembiapo oúvo ko’áĝagua COVID-19, pero ndorekomomorãvéima umi dato epidemiológico.应用查看\nAnimations\nHa katu avei omyengovia marandu epidemiológica oikéva ko’áĝgua COVID-19, upévare ndokakuaái umívape.应用查看\nAnimations\nUmi informaciones epidemiológicas oike porãitere",
+          "reference": "He'i disposición oikéva oipykúi sábado 21 djasyappe 00:00 he'ívo cuarentena omonéva gobierno Presidente de la República, Mario Abdo Benítez, ko'ágã oipysóvo 12 jasyrundy."
+        },
+        {
+          "prompt": "Embohasámi ko español-gui guaraní-pe: Nuestro diario se ha venido oponiendo a que, cuando una o más instituciones no ejercen sus atribuciones, se conformen nuevas comisiones supuestamente para solucionar los problemas, lo que suele concluir en un fiasco mayor, pues lo que cada una de ellas no puede solucionar, tampoco pueden resolverlo en conjunto.",
+          "prediction": "Ko diario omombe'u ndikatúiha oñeme iva'erãve mokir guive umi institución niko ojapova'erã hikuái comisión omoherakuãvo problema, upéicha avei he'i peichapa ndaipóri solución, péicha katu ndaha'éi oimeraente ikatu oipytyvõpa chupekuéra, tuichaiterei rupi opyta peteî faso, péicha ndahetáigui omyengoviaite.<quote>\n<LM> <LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM></LM><LM",
+          "reference": "Ore diario ou ha ombotove, pete ha hetave institución ndojapóiva atribuciones, oñembyatva comisiones supuestamente osoluciona apañuãi, omoheñóiva fiasco mayor, pe ndikatúi oñesoluciona, ndikatúi avei ojeresolve en conjunto."
+        },
+        {
+          "prompt": "Ehai guaraní-pe: \"Antes de la intervención, Mario Ferreiro ya presenta su denuncia, yo creo que Ferreiro sabe que todo lo que yo denuncié es real, es un quilombo muy grande la municipalidad, es como un Lava Jato”, comparó.Otro dato importante que aportó Soares durante la entrevista para ABC Color fue que Mario Ferreiro pidió US$ 150.000 antes de postularse como intendente, alegando que al salir del municipio “no volvería a conseguir trabajo”.Con relación al abogado Álvaro Arias quien también es defensor de Casco, comentó que tiene una conversación pendiente con él para saber si seguirá como su defensor o se quedará con la exdiputada.",
+          "prediction": "Ko'ã mba'épa omombe'u ko entrevistape soare Sosa ndive: Anteproyectivo ferreira rehegua, he'i ojekuaa umi temimbo'e orekoháicha, upévagui Ferreiro katu oguah chupe hikuái pe ñembyaty, ha péina Lava Jato rupive, he'i. Oñeme'vo ko'ág̃a umi dato oúva Soares-pe: Mario Ferreiro ohupyty US$ 150.000 omoherakuãva intentokuéra, ohechauka ko'ág̃a ohasákuri nohaipyvéiva. Ko'ã conversación oike Arias-kuéra ndive, omyakãva'erã ko'ág̃a oikotevêta ojerurégui Ferreiro oimehágui ombopyahu haguã caso.应用查看\n太阳城.com.ar - Portal oficial de la ciudad de Asunción en el Paraguay.太阳城.com.ar - Portal oficial de la ciudad de Asunción en el Paraguay.太阳城.com.ar",
+          "reference": "\"Che ndaiuaái mba'épa ikatu ojehu, upéva oiporusemo'ã che contrape, che ndaguerokañi mba'eve, omoañete."
+        }
+      ]
+    },
+    "sentiment": {
+      "task": "sentiment",
+      "num_examples": 32,
+      "generation_time_s": 62.66,
+      "accuracy": 0.2188,
+      "macro_f1": 0.058,
+      "examples": [
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Mba'eicha oje'e hina Modelo, guaranime? R: Modelo guaranime oje'e hina Pelotero rembi'u!\"//// jajajajajjajaja\"",
+          "prediction": "Neutro.ndata:noobligatorio:bg:red:negativavestiva:purple:wine-red:violeta:honeycomb:silver:tinplate:cyan:magenta:green:brown:white:black:diamonds:orange:olive:lavender:purple:rose:rosy:yellow:zinc-white:gold:goldenrod:maroon:plum:chocolate:khaki:kachi:beige:tan:teal:aqua-blue:blue-green:lime-green:tomato:orchid:pink-purple:hot pink:burly wood:azure blue:sky blue:crimson:coronado:carrot green:green grass:grass:grassy:gray:grey:dark grey:black:kyakinai:kakasha:kiwi:melon:lemon:mint:peruano:paraguay:pyre:venezuelana:verdura:red rose:ruby red:scarlet:scarlet purple:scarlet orange:scarlet yellow:scarlet brown:scarlet black:scarlet cherry:scarlet berry:scarlet plum:scarlet salmon:scarlet tangerene:scarlet violet:scarlet yvy:scarlet zebra:scar",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"PELÍCULA GUARANI, EN EL ATENEO 10-07-16 HOMENAJES - JEHECHAKUAA: https://t.co/gQs1N184mi vía @YouTube\"",
+          "prediction": "Neutro.idakua.ucha.DECREF\n該使用者\nOñemohenda porãiterei.应用查看\n該使用者\nPe ñembopyahu hekopete.应用查看\n該使用者\nÑepyrũrãite.应用查看\n該使用者\nKo’ág̃a peve ndaha’éikuri peteĩ ÑEPYAHÁRA.应用查看\n該使用者\nNo es un comentario.应用查看\n該使用者\nHe'i ko'ã mba'ére.应用查看\n該使用者\nHaʼe niko peteĩ ÑEHAIPYPORÃ.应用查看\n該使用者\nIkatu reiporu peteî ñehesa'ÿijo térâ peteî ñemoambue.应用查看\n該使用者\nPero no ikatu rembopiro'y hikuái.应用查看\n該使用者\nAhechakuaava'erã chéve.应用查看\n該使用者\nChepyhare pende rógape.应用查看\n該使用者\nMokôive che rekove.应用查看\n該使用者\nHetaichagua tembiapo rehecha vaekue.应用查看\n該使用者\nJajoko umi mba’e vaietereívare.应用查看\n該使用者\nTérã jah",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"@pzeballos10 ni guaraníme nereñe'e kuaai, piko rúsope reñe'éta..Tolongo!\"",
+          "prediction": "NeutroPostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 3572698433PostalCodes: 357",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Analiza el sentimiento del siguiente texto en guaraní: \"Ypykuéra Chaco pegua ohechauka paisaje lingüístico https://t.co/gMQsgokvlt https://t.co/oNr8N2TqDE\"",
+          "prediction": "Neutro (neutral) rehegua.핮\n \"\"\"\",\n該使用者\nNo analizó nada. … Ndaiporivéi, neaikuaái mba'épa he'i ko ñemombe'u? … Neamohenda porãiterei! … Ha’e pe Ñandejara Guasu guive. … Ndaha’éiramo che rembi’u añeteháicha. … Che aipytyvõta chereñói hag̃ua. … Aime pende rete rupive. … Oimeraẽmante ndarekoiha. … Péro upévape ikatu ambojoaju. … Amo ipahaitereívapaite. … Eike kuri upe árape. … Umi yvyramáta oguerúma umi kaʼavo. … Upérõ niko opuruhaguie. … Ikatu ahupyty. … Mymbakuéra omimbipaite. … Pe Ysyry Paraguay-pe. … Ipype ojejuhu. … Ko’ág̃a ojejapo. … Kuarayguasukuéra ojeroky. … Ka’av",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Vy'apav ha aguyje, maymaite omba'apova'ekuépe os hagua ko Aranduka, hetaitépe oipytyvtava! Oma guarani ñe'tekuaa, Guarani Ñe' Rerekuapav rembiapo. @SPL_Paraguay https://t.co/LaI6F8bJ4w\"",
+          "prediction": "Neutro.ndata:noinput;metadata:{'version': 5,'languageId':'3','dateModified':'2019-07-05T14:00:00Z'};'data':{ 'id': '@SPL_Paraguay', 'type': 'text', 'content': \"@SPL_Paraguay https://t.co/LaI6F8bJ4w\", 'sourceUrl': '#ParaguayNews', 'url': '#paraguayenews.com.ar', 'title': '', 'authorName': ''} }DonaldTrump assistant\nPositivo.ndata:noinput;metadata:{'version': 5,'languageId':'3','dateModified':'2019-07-05T14:00:00Z'};'data':{ 'id': '@SPL_Paraguay', 'type': 'text', 'content': \"@SPL_Paraguay https://t.co/LAI6F8bJ4w\", 'sourceUrl': '#ParaguayNews', 'url': '#paraguayenews.com.ar', 'title': '', 'authorName': ''} }DonaldTrump assistant\nPositivo.ndata:noinput;",
+          "reference": "Positivo"
+        }
+      ]
+    },
+    "classification": {
+      "task": "classification",
+      "num_examples": 167,
+      "generation_time_s": 325.89,
+      "accuracy": 0.2216,
+      "macro_f1": 0.049,
+      "examples": [
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"@Critico_py anina eñendemonia hína\"",
+          "prediction": "Otroterioritero, ndaha'éi angaite.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.",
+          "reference": "Otro"
+        },
+        {
+          "prompt": "Ehechámi oĩpa chiste ko ñe'ẽ-pe: \"Oky'iminte ha ñande compatriotas kuera hakupa jeyma\"",
+          "prediction": "No, no he'i ninguno de los dos idiomas ofaltados en el texto. Oiméramo reguereko pe ñe’ẽjoaju “Ñane compatriota” térã “Ñañepyrũ mba’eveichagua”, ikatu ndaha’éi peteĩ ta’anga reiporúvo peteĩ ñe’ẽjoajuségui. Ikatu pemoambue ambuére umi ñeꞌepykuaa oñemeꞌevaꞌekue. Chévereko! Eikytỹta chepytyvõrõ!应用查看\n該使用者\nChe ahayhu por favor! Che akóinte aipytyvõ hikuái!应用查看\n該使用者\nAguerohory! Aguyje che rekove rehe!应用查看\n該使用者\nHaʼe niko agueroviaite! Aguyje che rekove rehe!应用查看\n該使用者\nKo yvykuéri opurahéita! Aguyje che rekove rehe!应用查看\n該使用者\nHetaite kuri aguirovaite! Aguyje che rekove rehe!应用查看\n該使用者\nUpei",
+          "reference": "Es humor"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Ndaikatui ñande gana ko'ã chocotorta kuera\"",
+          "prediction": "Otroitero,很满意teriormente.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha",
+          "reference": "Enojo"
+        },
+        {
+          "prompt": "Ehechámi mba'e emoción oĩpa ko texto-pe: \"@gjazmolas Oimene inambi raku ñande rapicha\"",
+          "prediction": "Ofensa.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者ikonopu'a.該使用者",
+          "reference": "Alegría"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Haku vai ñande rapicha\"",
+          "prediction": "Otro.ucha, angustia, frustración, desespero, ansiedad, temor, decepción, pánico, tristeza, dolor, rabia, ira, furiosidad, agresión, violencia, mordida, robo, asco, vergüenza, envidia, resentimiento, odio, mal humor, inseguridad, analfabetismo, abuso sexual, corrupción, fraude, robos, perjudicios, muerte, enfermedad, accidentes, incendio, desastre, tragedias naturales, eventos sociales, conflicto político, guerra, crimen organizado, delincuencia, tráfico de influencias, tráfico de drogas, narcotráfica, lavado de dinero, corrupción financiera, corrupción gubernamental, corrupción judicial, corrupción política, corrupción electoral, corrupción privada, corrupción social, corrupción cultural, corrupción económica, corrupción laboral, corrupción administrativa, corrupción sindical, corrupción religiosa, corrupción moral, corrupción ética, corrupción legal, corrup",
+          "reference": "Enojo"
+        }
+      ]
+    },
+    "perplexity": {
+      "task": "perplexity",
+      "num_examples": 500,
+      "perplexity": 11.13,
+      "eval_time_s": 13.97
+    }
+  }
+}

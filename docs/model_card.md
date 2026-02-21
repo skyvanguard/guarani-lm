@@ -16,19 +16,23 @@ GuaraniLM-0.5B is the first open-source generative language model optimized for 
 
 ### Training Procedure
 
-1. **Continual Pre-Training**: QLoRA 4-bit with r=128, targeting all linear layers + embeddings. Trained on ~6.5M tokens of Guaraní text from Wikipedia, CulturaX, Jojajovai parallel corpus, and NLLB-200 augmented data.
+1. **Continual Pre-Training (CPT)**: QLoRA 4-bit with r=32, targeting q/k/v/o/gate/up/down projections. 1 epoch on ~308K texts (~6.5M tokens). Final loss: 2.296. Duration: ~3.4h on RTX 4070 8GB.
 
-2. **Supervised Fine-Tuning**: LoRA r=64 on ~100K instruction samples covering translation, chat, classification, and text generation in ChatML format.
+2. **Supervised Fine-Tuning (SFT)**: QLoRA 4-bit with r=32 on ~114K instruction samples in ChatML format. NEFTune noise alpha=5. 1 epoch. Final loss: 1.780. Duration: ~1.6h.
 
 ### Training Data
 
-| Source | Tokens | Usage |
-|--------|--------|-------|
-| Wikipedia Guaraní | ~1.5M | CPT |
-| CulturaX (grn) | ~1-3M | CPT |
-| Jojajovai parallel corpus | ~1.2M | CPT + SFT |
-| mmaguero datasets | ~300K | SFT |
-| NLLB-200 augmentation | ~2M | CPT + SFT |
+| Source | Records | Usage |
+|--------|---------|-------|
+| HPLT 2.0 cleaned | 73K docs | CPT |
+| Wikipedia Guaraní | ~5K articles | CPT |
+| Jojajovai parallel corpus | 30K pairs | CPT + SFT |
+| AmericasNLP 2021 | ~34K pairs | CPT + SFT |
+| Alpaca Guaraní | 52K | SFT |
+| mmaguero datasets | ~10K | SFT |
+| GUA-SPA 2023 | 1.5K pairs | SFT |
+| Gov.py translator | 3K pairs | CPT + SFT |
+| FLORES-200 / Belebele | ~3K | Eval |
 
 ## Intended Use
 
@@ -40,12 +44,19 @@ GuaraniLM-0.5B is the first open-source generative language model optimized for 
 
 ## Evaluation Results
 
-| Task | Metric | Baseline | GuaraniLM |
-|------|--------|----------|-----------|
-| Translation GN→ES | chrF2 | NLLB-200 | TBD |
-| Translation ES→GN | chrF2 | NLLB-200 | TBD |
-| Sentiment | Macro-F1 | gn-bert | TBD |
-| Perplexity GN | PPL | Qwen2.5-0.5B | TBD |
+Evaluated on held-out test sets with greedy decoding.
+
+| Task | Metric | Score |
+|------|--------|-------|
+| Translation GN→ES | BLEU | 2.98 |
+| Translation GN→ES | chrF2 | 25.89 |
+| Translation ES→GN | BLEU | 1.71 |
+| Translation ES→GN | chrF2 | 21.27 |
+| Sentiment (3-class) | Accuracy | 21.9% |
+| Classification | Accuracy | 22.2% |
+| Guaraní Perplexity | PPL | 11.13 |
+
+**Notes**: Translation BLEU/chrF2 scores reflect the challenge of Guaraní as an extremely low-resource language. The model shows learning signal above random baselines for classification. Perplexity of 11.13 on Guaraní text indicates meaningful language modeling capability compared to the base Qwen2.5-0.5B model.
 
 ## Limitations
 

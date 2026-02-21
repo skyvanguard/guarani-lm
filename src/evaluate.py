@@ -40,6 +40,8 @@ from datasets import load_dataset
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from prompt_templates import format_chatml
+
 # ---------------------------------------------------------------------------
 # Optional metric dependencies
 # ---------------------------------------------------------------------------
@@ -125,6 +127,18 @@ def load_model_for_eval(
     return model, tokenizer
 
 
+SYSTEM_PROMPT = "Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe."
+
+
+def wrap_prompt_chatml(user_prompt: str) -> str:
+    """Wrap a raw user prompt in ChatML format for the model."""
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_prompt},
+    ]
+    return format_chatml(messages)
+
+
 # ---------------------------------------------------------------------------
 # Generation helper
 # ---------------------------------------------------------------------------
@@ -184,6 +198,7 @@ def generate_responses(
                 "max_new_tokens": max_new_tokens,
                 "do_sample": do_sample,
                 "pad_token_id": tokenizer.pad_token_id,
+                "repetition_penalty": 1.2,
             }
             if do_sample:
                 gen_kwargs["temperature"] = temperature
@@ -250,16 +265,30 @@ def compute_chrf2(predictions: list[str], references: list[str]) -> float:
     return result.score
 
 
+def _extract_label(text: str, valid_labels: list[str]) -> str:
+    """Extract a classification label from model output via fuzzy matching.
+
+    The model may generate verbose text like "El sentimiento es positivo"
+    when the reference is just "Positivo".  This function searches the
+    generated text for any of the *valid_labels* and returns the first match.
+    """
+    text_lower = text.strip().lower()
+    for label in valid_labels:
+        if label in text_lower:
+            return label
+    # Fallback: return the first word
+    return text_lower.split()[0] if text_lower else ""
+
+
 def compute_accuracy(predictions: list[str], references: list[str]) -> float:
     """Compute accuracy for classification tasks.
 
-    Normalizes both predictions and references to lowercase before
-    comparing.
+    Uses fuzzy label extraction to handle verbose model outputs.
 
     Parameters
     ----------
     predictions : list[str]
-        Model predicted labels.
+        Model predicted labels (may be verbose).
     references : list[str]
         Gold labels.
 
@@ -272,18 +301,22 @@ def compute_accuracy(predictions: list[str], references: list[str]) -> float:
         logger.warning("sklearn not available — returning 0.0 for accuracy")
         return 0.0
 
-    preds_norm = [p.strip().lower() for p in predictions]
     refs_norm = [r.strip().lower() for r in references]
+    valid_labels = list(set(refs_norm))
+
+    preds_norm = [_extract_label(p, valid_labels) for p in predictions]
     return accuracy_score(refs_norm, preds_norm)
 
 
 def compute_macro_f1(predictions: list[str], references: list[str]) -> float:
     """Compute macro-averaged F1 for classification tasks.
 
+    Uses fuzzy label extraction to handle verbose model outputs.
+
     Parameters
     ----------
     predictions : list[str]
-        Model predicted labels.
+        Model predicted labels (may be verbose).
     references : list[str]
         Gold labels.
 
@@ -296,8 +329,10 @@ def compute_macro_f1(predictions: list[str], references: list[str]) -> float:
         logger.warning("sklearn not available — returning 0.0 for macro F1")
         return 0.0
 
-    preds_norm = [p.strip().lower() for p in predictions]
     refs_norm = [r.strip().lower() for r in references]
+    valid_labels = list(set(refs_norm))
+
+    preds_norm = [_extract_label(p, valid_labels) for p in predictions]
     return f1_score(refs_norm, preds_norm, average="macro", zero_division=0)
 
 
@@ -306,10 +341,12 @@ def compute_perplexity(
     tokenizer: Any,
     texts: list[str],
     *,
-    max_length: int = 2048,
-    batch_size: int = 8,
+    max_length: int = 512,
+    batch_size: int = 1,
 ) -> float:
     """Compute perplexity of the model on a list of texts.
+
+    Processes one text at a time to avoid OOM on limited VRAM.
 
     Parameters
     ----------
@@ -320,9 +357,9 @@ def compute_perplexity(
     texts : list[str]
         Texts to evaluate.
     max_length : int
-        Maximum sequence length.
+        Maximum sequence length (default 512 to save VRAM).
     batch_size : int
-        Batch size.
+        Batch size (default 1 for safety on 8GB VRAM).
 
     Returns
     -------
@@ -332,6 +369,8 @@ def compute_perplexity(
     device = next(model.parameters()).device
     total_loss = 0.0
     total_tokens = 0
+
+    torch.cuda.empty_cache()
 
     for i in tqdm(range(0, len(texts), batch_size), desc="Computing perplexity"):
         batch_texts = texts[i : i + batch_size]
@@ -344,8 +383,10 @@ def compute_perplexity(
         ).to(device)
 
         with torch.no_grad():
-            outputs = model(**inputs, labels=inputs["input_ids"])
-            # Compute per-token loss excluding padding
+            # Mask padding tokens in labels so they don't contribute to loss
+            labels = inputs["input_ids"].clone()
+            labels[inputs["attention_mask"] == 0] = -100
+            outputs = model(**inputs, labels=labels)
             loss = outputs.loss
             # Count non-padding tokens
             attention_mask = inputs["attention_mask"]
@@ -353,6 +394,8 @@ def compute_perplexity(
 
         total_loss += loss.item() * n_tokens
         total_tokens += n_tokens
+        del outputs, inputs
+        torch.cuda.empty_cache()
 
     if total_tokens == 0:
         return float("inf")
@@ -410,8 +453,11 @@ def evaluate_generation_task(
     logger.info("  Loaded %d test examples", len(dataset))
 
     # Build prompts — expects "prompt" and "reference" fields
-    prompts = dataset["prompt"]
+    raw_prompts = dataset["prompt"]
     references = dataset["reference"]
+
+    # Wrap prompts in ChatML format (model was trained with ChatML)
+    prompts = [wrap_prompt_chatml(p) for p in raw_prompts]
 
     # Generate responses
     start_time = time.time()
@@ -442,10 +488,10 @@ def evaluate_generation_task(
             results[metric_name] = round(score, 4)
             logger.info("  %s: %.4f", metric_name, score)
 
-    # Save example predictions
+    # Save example predictions (use raw prompts for readability)
     results["examples"] = [
         {"prompt": p, "prediction": pred, "reference": ref}
-        for p, pred, ref in zip(prompts[:5], predictions[:5], references[:5])
+        for p, pred, ref in zip(raw_prompts[:5], predictions[:5], references[:5])
     ]
 
     return results
@@ -682,6 +728,9 @@ def run_evaluation(config: dict[str, Any], task_filter: list[str] | None = None,
             continue
         if task_filter and task_name not in task_filter:
             continue
+
+        # Free GPU memory between tasks
+        torch.cuda.empty_cache()
 
         if "perplexity" in task_cfg.get("metrics", []):
             result = evaluate_perplexity_task(model, tokenizer, task_name, task_cfg, eval_cfg)
