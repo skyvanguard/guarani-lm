@@ -1,0 +1,148 @@
+{
+  "model_name": "checkpoints/sft_v2/final",
+  "timestamp": "2026-02-23T10:43:21.339103+00:00",
+  "guarani_lm": {
+    "translation_gn_es": {
+      "task": "translation_gn_es",
+      "num_examples": 500,
+      "generation_time_s": 2340.41,
+      "bleu": 2.1381,
+      "chrf2": 25.8668,
+      "examples": [
+        {
+          "prompt": "Embohasámi ko guaraní-gui español-pe: Avei, mba'emba'épa ikatu ojejapo ko tavusu ryeppe, Ary ñemomorã rehehápe.",
+          "prediction": "Asimismo, se menciona que la ciudad de Asunción es sede del Año Internacional de las Lenguas Indígenas.$LANG\n핮assistant\nAsimismo, se mencionó que la capital de esta ciudad será el lugar donde se realizarán los eventos culturales en su nombre.$LANG\n�assistant\nEn tanto, se menció que la capital de este municipio será el sitio donde se desarrollarán los festivales y actividades culturales con ese nombre.$LANG\n游戏副本\nOtro evento cultural importante para la comunidad es el Día Nacional de la Mujer Paraguaya.$LANG\n新人玩家\nPor otro lado, se mencionaron otros festejos importantes como el Día Nacional de la Mujer paraguaya.$LANG\n战士职业\nTambién se mencionó otra fiesta nacional atractiva para la población, el Día Nacional de la Mujer Paraguaya.$LANG\n法师职业\nAdemás, se mencionó una celebración internacional de la mujer paraguaya.$LANG\n战士来说\nAsimismo, se mencionó un día mundial de la mujer paraguaya.$LANG\n:UIAlertions\nAsimismo, se mencionó un día internacional de la mujer",
+          "reference": "Así como, analizar líneas de acción o iniciativas posibles de ser implementadas en el Departamento, en el marco de la Conmemoración del Año."
+        },
+        {
+          "prompt": "Emongueta español-pe: Péicha avei obispo he'i ohecháha ta'anga rupive ha vídeo, ombyasy, ohechávo ochyryry opytávo mymba ha yvyramáta ha umi ka'avo.",
+          "prediction": "Asimismo, el obispo señaló que se observaron las imágenes de la escena en un video, con una actitud despectiva, recordando que los animales estaban atrapados entre las plantas y los árboles.$LANGUE 19/05/2020 - 16:48 PM | Por Grupo Paraguay TV Programa “La noche del Ñemby” – El día más lento del año. La noche del Ñemby es un momento histórico para nuestro país porque sucesivamente cada día se vuelve más peligroso a través de incendios forestales y inundaciones provocadas por huracanes.$LANGUE 19/05/2020 - 17:30 PM | Por Grupo Paraguay TV Programa “La noche del Ñemby” – El día más lento del año. La noche del Ñemby es un momento histórico para nuestro país porque sucesivamente cada día se vuelve más peligroso a través de incendios forestales y inundaciones provocadas por huracanes.$LANGUE 19/05/2020 - 1",
+          "reference": "Asimismo, el obispo expresó que han visto por fotos y vídeos, con profunda tristeza, como han quedado calcinados tantas especies nativas de la fauna chaqueña y ni hablar de la flora."
+        },
+        {
+          "prompt": "Emongueta español-pe: Jiménez oime ternado Marcos Kohn Gallardo ha Rubén Darío Romero ndive.",
+          "prediction": "Jimenez fue un “ternavito” de los dos amigos del director, Marcos Kohn Gallardo y Rubén Darío Romero.$LANG\nℎÉicha, el juez no dio crédito a la declaración jurada que se le hizo al exfuncionario de la Policía Nacional, quien había dicho que era una falsa denuncia por haber sido detenido en su casa con armas.$LANG\nℏEsa es otra de las cosas que me pasó hoy. El jefe de Gabinete del Presidente (Herradura) nos dijo que yo estaba haciendo algo malo porque mi trabajo está muy apoyado por el Ministerio Público.$LANG\nℏ¿Qué tipo de travesías estaban realizando? La respuesta de la Justicia fue inusualmente cortante.$LANG\nℏYo dije que eres un hombre que tiene todo lo necesario para cumplir mis compromisos.$LANG\nℏPues eso sí, pero si te digo que eres un hombre que tiene todo lo necesario para cumplir sus compromisos, ¿qué hay de bueno aquí?$LANG\nℏNo sé qué decirte. Si estoy diciendo algo correcto, entonces solo puedo afirmar que soy un hombre que tiene todo lo necesario para",
+          "reference": "Jiménez estaba ternado con Marcos Kohn Gallardo y Rubén Darío Romero."
+        },
+        {
+          "prompt": "Ehai español-pe ko ñe'ẽ guaraní: Ojerúre umi egresado tome' hi'aguyje ogayguápe ha umi mbo'ehárape, ha upéva ári anitei omboyke iñemoarandu, péva ejercicio de la profesión pukukue.",
+          "prediction": "Piden que los graduados tengan una buena relación con sus padres y su familia, además de un buen trabajo en el colegio, para evitar que se quede sin clases ni ejercicios de la profesión”.Tags: Egresos, Profesiones, Educación, Universidades, Universidad Nacional del Este (UNET), Misiones, Programa de Estudios Superiores, Escuela Superior de Bellas Artes (ESBA).Propone también “que las universitarias no abran puertas a exámenes” y que “la educación es una actividad social”, pero que solo sirve como “un medio para promover la igualdad entre mujeres y hombres”.Tags: Egresos, Profesionales, Educación, Universidades, Universidad Nacional del Este (UNET), Misiones, Programa de Estudiantes Superiores, Escuela Superior de Bellas Artes (ESBA) .Propone también “que las universitarias no abran puertas a exámenes” y que “la educación es una actividad social”, pero que sólo sirve como “un medio para promover la igualdad entre mujeres y hombres”.Tags: Egresos, Profesionales, Educación, Universidades,",
+          "reference": "Pidió a los egresados que sean agradecidos con la familia y con sus formadores, y por sobre todo, no dejar de estudiar a lo largo del ejercicio de la profesión."
+        },
+        {
+          "prompt": "Traduce del guaraní al español: Ombojoaju ponderaciones ojapóva a nivel constitucional y moral.",
+          "prediction": "La evaluación de las pesquisas se basa en los considerados por el jurado, que incluyen la ponderación sobre aspectos constitucionales y morales.$LANGUE 1) La evaluación de las pesquisas se basa en los considerados por el jurado, que incluye la ponderación sobre aspectos constitucionales y morales.LNGUE 2) El análisis de las opiniones es un proceso interno para evaluar cada uno de ellos con criterios generales e inferiores.El análisis de las opiniones es un proceso interno para evaluar cada uno de ellos con criterios generales e inferiores.GLGUE 3) Los resultados de las pesquisas son analizados como una base para tomar decisiones fundamentadas.En general, la evaluación de las pesquisas es un proceso interno para evaluar cada uno de ellos con criterios generales e inferiores.Aunque no existe ningún reglamento oficial estableciendo su funcionamiento formal, existen varios protocolos internacionales que han sido adoptados por países miembros de la ONU.$LANGUE 4) Las conclusiones de las pesquisas pueden ser utilizadas para determinar si hay alguna tendencia común entre las",
+          "reference": "Añadió que hay varias “ponderaciones” que hacer a nivel constitucional y moral."
+        }
+      ]
+    },
+    "translation_es_gn": {
+      "task": "translation_es_gn",
+      "num_examples": 500,
+      "generation_time_s": 2603.79,
+      "bleu": 1.5595,
+      "chrf2": 22.3359,
+      "examples": [
+        {
+          "prompt": "Emongueta guaraní-pe: Camilo Soares –extitular de la Secretaría de Emergencia Nacional (SEN) y principal denunciante de las irregularidades en la Municipalidad de Asunción– visitó ABC Cardinal y durante su entrevista negó haber utilizado dinero del cartismo para pagar la campaña política de Avanza País para las elecciones del 2013.",
+          "prediction": "Camilo Soares, extitular secretaria de emergencias nacionales (SEN) ha'éva denunciado ko'ã irregularidad Municipalidad de Asunción-pegua rehegua. Ko'ágã ABC Cardinal rupive omombe'u interviewa ndohóiha mba'eveichagua pago Cartistas pe campaignación avance pais-pe péicha elección 2013 jave.$LANG\nϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑ",
+          "reference": "Camilo Soares extitular Secretaría de Emergencia Nacional (SEN) ha principal denunciante irregularidad Municipalidad de Asunción-pe oikóva ou ABC Cardinal -pe oñomongeta haguã ha omombe'u mba'éichapa omi cartismo ohepyme'va campaña política Avanza País jeporavo guasu 2013 jave."
+        },
+        {
+          "prompt": "Emongueta guaraní-pe: Reciben a los Reyes Magos, desde Nueva York",
+          "prediction": "Oñembojegua umi Rey Mburuvicha rehegua, París távape应用查看.$LANG\n�assistant\nRey Mburuvichakuéra ogueraha París távape应用查看.$LANG\n핮assistant\nKo'ã ñembokapilla omohendava'erã ko'ã tetãvorekuérape.$LANG\n游戏副本\nQUE LOS REYES MAGOS DE LA CULTURA PARAGUAYA RECIBEN A LOS REPUBLICANOS EN SU TÁVAGOPE.$LANG\n新人玩家\nQue los Reyes de la Cultura paraguaya reciban al pueblo en su tavo.$LANG\n新人玩家\nque los reyes magos del paisagro se reunieron con sus pueblos para celebrar el aniversario de su nacimiento.$LANG\n新人玩家\nque los reyes magos de la cultura paraguaya reciben un homenaje por su natalidad.$LANG\n新人玩家\nque los reyes mágicos de la cultura paraguaya recibirán una honrosa recepción y felicitación.$LANG\n新人玩家\nque los reyes magos de la cultura paraguaya recibieran un reconocimiento especial por su",
+          "reference": "Oguah mbohupa Reyes Magos, oúva Nueva York guive"
+        },
+        {
+          "prompt": "Embohasámi ko español-gui guaraní-pe: Señaló que la disposición entra a regir desde este sábado 21 de marzo a las 00:00 e indicó que durará hasta que culmine la cuarentena que aprobó el gobierno del Presidente de la República, Mario Abdo Benítez, que ahora se extendió hasta el 12 de abril.",
+          "prediction": "Omoañete disposiciones osyrvo ágã viernes 21 jasypakõime 00:00 aravo peve ha he'i omohendava'erãha kuimba'énte umi mokõive tetãme péicha omba'apo hikuái upe cuarentena ohupytéma gueteri ary paha.$LANG\nTags: Paraguay Gobierno Nacional Covid-19 pandemia COVID-19 coronavirus Coronavirus Pandemic Corona covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19 coronavirus covid-19",
+          "reference": "He'i disposición oikéva oipykúi sábado 21 djasyappe 00:00 he'ívo cuarentena omonéva gobierno Presidente de la República, Mario Abdo Benítez, ko'ágã oipysóvo 12 jasyrundy."
+        },
+        {
+          "prompt": "Embohasámi ko español-gui guaraní-pe: Nuestro diario se ha venido oponiendo a que, cuando una o más instituciones no ejercen sus atribuciones, se conformen nuevas comisiones supuestamente para solucionar los problemas, lo que suele concluir en un fiasco mayor, pues lo que cada una de ellas no puede solucionar, tampoco pueden resolverlo en conjunto.",
+          "prediction": "Diario niko omopyenda heta mba'ére ndorekóiha umi temimo'ã iporãvéva, upéicha jepiguáicha oñemohendava'erã upe tenda ojeguerekóramo ambue aty ohechauka porãve haguã hembiapo, péichagua katuete ikatúma ombotapykuereko chugui pe problema tuja, péva he'i riremimi opavave apytégui ndojekuaaporãiha.$LANG\nTags: 2017-06-30T08:54:49Z\nNo hay comentarios:\nSuscribir respuesta\nAún no tiene un perfil. En este momento no puedes dejar un comentario. ¡Por favor, inscríbete ahora! ¿Quedas sin dinero? Paga y recibe gratis.\n¡Esperamos verte pronto!\n¿Qué es lo que te espera después de terminar el texto?\nEscribe algo antes de cerrar el diálogo.\nPara enviar un mensaje al usuario principal, seleccione \"Me gusta\" del botón derecho del mensaje y luego escriba",
+          "reference": "Ore diario ou ha ombotove, pete ha hetave institución ndojapóiva atribuciones, oñembyatva comisiones supuestamente osoluciona apañuãi, omoheñóiva fiasco mayor, pe ndikatúi oñesoluciona, ndikatúi avei ojeresolve en conjunto."
+        },
+        {
+          "prompt": "Ehai guaraní-pe: \"Antes de la intervención, Mario Ferreiro ya presenta su denuncia, yo creo que Ferreiro sabe que todo lo que yo denuncié es real, es un quilombo muy grande la municipalidad, es como un Lava Jato”, comparó.Otro dato importante que aportó Soares durante la entrevista para ABC Color fue que Mario Ferreiro pidió US$ 150.000 antes de postularse como intendente, alegando que al salir del municipio “no volvería a conseguir trabajo”.Con relación al abogado Álvaro Arias quien también es defensor de Casco, comentó que tiene una conversación pendiente con él para saber si seguirá como su defensor o se quedará con la exdiputada.",
+          "prediction": "Oñepresenta denuncia Mario Ferreira rehe, he'i ferroviario omotenondetaha umi mba'énte ojehúva ko árape, péicha Ferreiro oikuaauka umi mba'e ojehecha haguã ko arapokõindpe, pero ndorekói evidencia ni prueba.Upévare, so'o ojerurévo US$ 150.000 peve omoañete hikuái intento de candidatura, upéichante avei omyengovia chupekuéra exdiputada Óscar González Daher (ANR) ha ambue miembro Partido Liberal Colorado-gui.KE'AHA KUÉRA OÑEMOMORÃVA HAG̃UA MECPEKUETEHÁPE.QUE LA CONCEPCIÓN DE LOS PÚBLICOS Y EL DERECHO A LA EXTRANJERIA.QUE LA CONCEPCIÓN DE LOS PÚBLICOS Y EL DERECHO A LA EXTRANJERIA.QUE LA CONCEPCIÓN DE LOS PÚBLICOS Y EL DERE",
+          "reference": "\"Che ndaiuaái mba'épa ikatu ojehu, upéva oiporusemo'ã che contrape, che ndaguerokañi mba'eve, omoañete."
+        }
+      ]
+    },
+    "sentiment": {
+      "task": "sentiment",
+      "num_examples": 32,
+      "generation_time_s": 237.18,
+      "accuracy": 0.4688,
+      "macro_f1": 0.1287,
+      "examples": [
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Mba'eicha oje'e hina Modelo, guaranime? R: Modelo guaranime oje'e hina Pelotero rembi'u!\"//// jajajajajjajaja\"",
+          "prediction": "NegativoPostalCodes: 173569-420863\nPropuestas de modos para responder a la pregunta: - Por favor, muestre una respuesta correcta al respecto del modelo en el siguiente formato: \"Modelo guaranime oje’e hina Peloteros rembi’u\". - Si no hay respuesta correcta, por favor, dime que es lo que te interesa saber sobre este tema. .\nTags: .quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preguntas.quequieres preg",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"PELÍCULA GUARANI, EN EL ATENEO 10-07-16 HOMENAJES - JEHECHAKUAA: https://t.co/gQs1N184mi vía @YouTube\"",
+          "prediction": "NeutroPostalCodes: N/A\nTags: Película Guarani en el Ateneo de la Lengua y Cultura Guaraní 25/09/16 Homenaje a los 10 años del Año Internacional de las lenguas indígenas (JEHECHAKUAAMBY) https://t.co/gQs1N184mi vía @YouTube\nULEMÁS DE LA DERECHA.QUE NO SE PUEDE SER UNA TRADUCIÓN DEL GUANÉ CONCEPTUAL Y CULTURAL PARA LOS PROFESORES DE LENGUA GUARANÍ QUE TENGÜE GUARANÍME.QUE NO ES UNA TRADUCCIÓN DEL GUANÉ CONCEPTUAL Y CULTURAL PARA LOS PROFESORES DE LENGUA GUARANÍ QUE TENGÜE GUARANÍME.QUE NO ES UNA TRADUCCION DEL GUANÉ CONCEPTUAL Y CULTURAL PARA LOS PROFESORES DE LENGUA GUARANÍ QUE TENGÜE GUARANÍME.QUE NO ES UNA TRADUCCION DEL GUANÉ CONCEPTUAL Y C",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"@pzeballos10 ni guaraníme nereñe'e kuaai, piko rúsope reñe'éta..Tolongo!\"",
+          "prediction": "Negativo>manualterior :: Ñemboheko: @PZBalbosa :: Ndaikatuvéima chupekuéra omombe'u ko mba'e porãite ! https://t.co/59286473dC https://www.youtube.com/watch?v=UwQgWzVxKsE #Paraguay #Guaraniesuques #paraguayguaraniqueños #ParaguayGuanahagua #ParaguayGuaranitario #ParaguayGuaranipuninero #Paraguaya Guaraníse #Paraguayguaraniseporandurupive #Paraguayguaramyaseporanduro #Paraguayguaraipuna #Paraguayguarepuapuru #Paraguayguarembyrasy #Paraguayguarioporo'y #Paraguayguavirutakuera #Paraguayguavaipaeta #Paraguayguavarapekue #Paraguayguavepero #Paraguayguavi #Paraguayguavo #Paraguayguavokatu #Paraguayguavogui #Paraguayguavovusu #Paraguayguavovo #Paraguayguavore #Paraguayguav",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Analiza el sentimiento del siguiente texto en guaraní: \"Ypykuéra Chaco pegua ohechauka paisaje lingüístico https://t.co/gMQsgokvlt https://t.co/oNr8N2TqDE\"",
+          "prediction": "Neutro@dynamicteriorquequesión reheguaPostalCodes: 0971365467, @RomeoGarcia_ #Paraguay #ChacoPE #Lingüística#Guaraniesypeuheekuera #paraguay.pe #guaranipeuhai #lingueperdona #lenguasindias #panoramaparaguayo #palabrasdelnorte #losalososparaguanape #laclaseparaguaya #llamadaa@gmail.com #mundoparaguay #paraguaypeuhaa #paraguaypeuharaipapa #paraguaypeuharepapa #paraguaypeuhariapapa #paraguaypeuhariapecopa #paraguaypeuhariasenacopasa #paraguaypeuharasenaocopia #paraguaypeuharakopyama #paraguaypeuharakopepa #paraguaypeuharojepype #paraguaypeuhrarogupe #paraguaypeuhrasorupete #paraguaypeuhrasykuri #paraguaypeuhrrakatake #paraguaypeuhratereko #paraguaypeuhrafetoreseñeta #paraguay",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Vy'apav ha aguyje, maymaite omba'apova'ekuépe os hagua ko Aranduka, hetaitépe oipytyvtava! Oma guarani ñe'tekuaa, Guarani Ñe' Rerekuapav rembiapo. @SPL_Paraguay https://t.co/LaI6F8bJ4w\"",
+          "prediction": "Positivos: “Orepytyv 10%” Negativos: “@SPL_Paraguay” Neutros: “https://t.co/laI6F8bJ4w”PostalCodes: N/ATags: Paraguayo Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Paraguay Par",
+          "reference": "Positivo"
+        }
+      ]
+    },
+    "classification": {
+      "task": "classification",
+      "num_examples": 167,
+      "generation_time_s": 574.91,
+      "accuracy": 0.2455,
+      "macro_f1": 0.0848,
+      "examples": [
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"@Critico_py anina eñendemonia hína\"",
+          "prediction": "Otroietetama pe ñembohasa.$LANG\n_Parms\nKo’ãichagua tembiapo ikatu omombe’u mba’e porandukuéra térã ambue marandu, taha’e ñemyesakã térã jehai. Opaite kuaapy rehegua niko ndahasýiva jahecha ha oguerahauka chupekuérape opavave tapicha arandukakuérare. Pe ñembopyahu jeikekuaarã ikatu avei ojepuru umi puruhára rembipota rupive. Ikatúramo rejuhu koʼãichagua taꞌãngambyry, tekoteve rejogua peteĩ kuatiahayru web-pe térã reg̃uava eramo peteĩ página web en línea-pe. PETECHUÉVA: 1) Tembiecharã (Texto) 2) Video Clip (Video) 3) Audio Clip (Audio) .PEME’ẼTA: 4) Texto (Text) 5) Video Clip (Video) 6) Audio Clip (Audio).QUE",
+          "reference": "Otro"
+        },
+        {
+          "prompt": "Ehechámi oĩpa chiste ko ñe'ẽ-pe: \"Oky'iminte ha ñande compatriotas kuera hakupa jeyma\"",
+          "prediction": "No, no hay humor en el texto.FilterWhere\n$LANG\nEs un insulto al pueblo paraguayo.:UIAlert\nCHE AYU QUE NO TE PUEDES PASAR POR SIN SER UN PARAGUA!QUE NOSOTROS TENGÁIMOS EL DERECHO DE VIVIR EN SU LANDA.QUE SE SIENTES LIBRE Y HABLA CON TU PADRES.QUE VOCEDAS “¡Ayúdame a vengarme de este traidor!”Que te digamos que es una locura y que debes ser considerado como un niño por su generación.Lea más: Paraguay se encuentra entre los países con la peor pobreza del mundoLa gente tiene derecho a vivir en su país porque él mismo lo posee. Que ustedos también puedan vivir en sus tierras.\"que son las tierras de nuestros padres\".Que si alguien está cometiendo actos de corrupción debe ser castigada.Las mujeres tienen derecho igualmente a vivir en su territorio debido a que ella misma es parte de su familia.Ellos pueden morir sin tener nada para alimentarse ni ropa.Después leemos que \"ellos podrán morir solo\",",
+          "reference": "Es humor"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Ndaikatui ñande gana ko'ã chocotorta kuera\"",
+          "prediction": "Alegríaobsług\n$LANG\n erkläke$LANG\n erkläke$LANG\n erkläke$LANG\n erkläke$LANG\n erkläke$LANG\n游戏副本\n$LANG\n新人玩家\n$LANG\n玩家朋友\n$LANG\nجماهquevalia$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have)quevaliar$LANG\n(Have",
+          "reference": "Enojo"
+        },
+        {
+          "prompt": "Ehechámi mba'e emoción oĩpa ko texto-pe: \"@gjazmolas Oimene inambi raku ñande rapicha\"",
+          "prediction": "Otroietetava’ekue pe marandu.$LANG\nTags: Emociones, Textos, Paraguay, Grecia, Etnias, Tradiciones, Religión, Cultura, Historia, Arquitectura, Arte, Cine, Teatro, Literatura, Música, Juegos, Enfermedades, Salud, Ciencias, Tecnología, Educación, Deportes, Política, Economía, Sociedad, Trabajo, Familias, Niños, Adolescencia, Juventud, Población, Raza, Color, Lingüística, Geografía, Astronomía, Astrofísico, Antropóloga, Sociólogo, Psicologo, Estudios de la Naturaleza, Investigador, Investigadores, Profesionales, Docentes, Educadores, Recursos Humanitarios, Programas Educativos, Servicios Públicos, Organismos y Entidades del Estado, Administraciones públicas, Gobierno Nacional, Ministerio de Hacienda, Ministerios de Justicia, Seguridad Social, Secretaría General de Estado, Consejo Federal de Estados Unidos, Congreso, Legislación, Reglamentos, Leyes, Decretos",
+          "reference": "Alegría"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Haku vai ñande rapicha\"",
+          "prediction": "AlegraPostalCodes: 0981-432765\nEspecialistas en Salud Pública y Medicina Interna, Médicos generales, Psicólogos, Oftalmologistas, Cardiólogo, Cirujano general, Ginecólogo, Hematólogo, Infectólogo, Especialista en medicina deportiva, Analistas clínicos, Nutricionistas, Odontopediatras, Traumatólogos, Radioterapeutas, Anestesiologists, Clínico asistente, Asistencia sanitaria, Profesionales de enfermería, Geriatras, Enfermeros, Auxiliares de emergencia, Médicas generales, Dentistas, Pediatras, Obstetras, Oncólogos, Urólogo, Dietistas nutricionales, Estomacólogos, Acupuntores, Alergists, Patrulleras médicas, Tratamiento de puerperal, Terapia intensiva, Dieta especializada, Rehabilitación, Fisioterapia, Recuperación, Postural, Padrinos, Requisitos especiales, Efectividad del tratamiento\".Tags: salud",
+          "reference": "Enojo"
+        }
+      ]
+    },
+    "perplexity": {
+      "task": "perplexity",
+      "num_examples": 500,
+      "perplexity": 10.22,
+      "eval_time_s": 15.27
+    }
+  }
+}
