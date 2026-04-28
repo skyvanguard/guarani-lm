@@ -1,0 +1,80 @@
+{
+  "model_name": "checkpoints/sft/final",
+  "timestamp": "2026-02-20T23:09:56.991245+00:00",
+  "guarani_lm": {
+    "sentiment": {
+      "task": "sentiment",
+      "num_examples": 32,
+      "generation_time_s": 69.43,
+      "accuracy": 0.1875,
+      "macro_f1": 0.0352,
+      "examples": [
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Mba'eicha oje'e hina Modelo, guaranime? R: Modelo guaranime oje'e hina Pelotero rembi'u!\"//// jajajajajjajaja\"",
+          "prediction": "Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.ndata: Neutro.",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"PELÍCULA GUARANI, EN EL ATENEO 10-07-16 HOMENAJES - JEHECHAKUAA: https://t.co/gQs1N184mi vía @YouTube\"",
+          "prediction": "Neutro.idakua.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"@pzeballos10 ni guaraníme nereñe'e kuaai, piko rúsope reñe'éta..Tolongo!\"",
+          "prediction": "Neutro.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽva guaraníme ha españolpe.ndata: Nde ha'e peteĩ pytyvõhára oñe'ẽ",
+          "reference": "Negativo"
+        },
+        {
+          "prompt": "Analiza el sentimiento del siguiente texto en guaraní: \"Ypykuéra Chaco pegua ohechauka paisaje lingüístico https://t.co/gMQsgokvlt https://t.co/oNr8N2TqDE\"",
+          "prediction": "Neutro.㶲\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看\n应用查看",
+          "reference": "Neutro"
+        },
+        {
+          "prompt": "Es positivo, negativo o neutro: \"Vy'apav ha aguyje, maymaite omba'apova'ekuépe os hagua ko Aranduka, hetaitépe oipytyvtava! Oma guarani ñe'tekuaa, Guarani Ñe' Rerekuapav rembiapo. @SPL_Paraguay https://t.co/LaI6F8bJ4w\"",
+          "prediction": "Neutro.ndata: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0>tag: 0.0",
+          "reference": "Positivo"
+        }
+      ]
+    },
+    "classification": {
+      "task": "classification",
+      "num_examples": 167,
+      "generation_time_s": 335.02,
+      "accuracy": 0.521,
+      "macro_f1": 0.0798,
+      "examples": [
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"@Critico_py anina eñendemonia hína\"",
+          "prediction": "Otroterioritero.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.",
+          "reference": "Otro"
+        },
+        {
+          "prompt": "Ehechámi oĩpa chiste ko ñe'ẽ-pe: \"Oky'iminte ha ñande compatriotas kuera hakupa jeyma\"",
+          "prediction": "No, no he'i chiste. Oĩ peteĩ ñe’ẽjoaju oñembohasáva chéve: \"Oky'imi ha ñande compatriota kuera hakupa jeyma\". Ko ñe'ẽ oñembohasáva chéve ha'e peteĩ ñe'ẽjoaju oñembohasáva chéve. Ojapo peteĩ ñe’ẽjoaju oñembohasáva chéve, ha katu ndaikatúi oñembohasáta chéve. Oĩ peteĩ ñe’ẽjoaju oñembohasáva chéve: \"Oky'imi ha ñande compatriota kuera hakupa jeyma\". Ko ñe'ẽ oñembohasáva chéve ha'e peteĩ ñe'ẽjoaju oñembohasáva chéve. Ojapo peteĩ ñe'ẽjoaju oñembohasáva chéve, ha katu ndaikatúi oñembohasáta",
+          "reference": "Es humor"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Ndaikatui ñande gana ko'ã chocotorta kuera\"",
+          "prediction": "Otro.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha",
+          "reference": "Enojo"
+        },
+        {
+          "prompt": "Ehechámi mba'e emoción oĩpa ko texto-pe: \"@gjazmolas Oimene inambi raku ñande rapicha\"",
+          "prediction": "Ofensa.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者: @gjazmolas Oimene inambi raku ñande rapicha.該使用者",
+          "reference": "Alegría"
+        },
+        {
+          "prompt": "Clasifica la emoción de este texto guaraní: \"Haku vai ñande rapicha\"",
+          "prediction": "Otro.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha.ucha",
+          "reference": "Enojo"
+        }
+      ]
+    },
+    "perplexity": {
+      "task": "perplexity",
+      "num_examples": 500,
+      "perplexity": 28137.68,
+      "eval_time_s": 14.62
+    }
+  }
+}

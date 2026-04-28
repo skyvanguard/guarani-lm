@@ -121,6 +121,15 @@ wandb/
 # Unsloth cache
 unsloth_compiled_cache/
 
+# Tesseract data
+.tessdata/
+
+# llama.cpp (cloned separately)
+llama.cpp/
+
+# FastText model
+lid.176.bin
+
 # Claude Code
 .claude/
 
