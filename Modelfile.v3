@@ -1,0 +1,31 @@
+# Modelfile para GuaraniLM v3 (cpt_v3_refine, Qwen2.5-3B + SFT + CPT refine)
+#
+# Uso después que termine el GGUF export:
+#
+#   ollama create guarani-lm-v3 -f Modelfile.v3
+#   ollama run guarani-lm-v3
+#
+# Parámetros calibrados durante la sesión de pruebas para reducir noise tokens
+# y mejorar coherencia. Subí temperature a 0.7 para chat creativo, bajá a 0
+# para traducción.
+
+FROM ./checkpoints/cpt_v3_refine/gguf/model-q4_k_m.gguf
+
+PARAMETER temperature 0.6
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+PARAMETER repeat_penalty 1.8
+PARAMETER repeat_last_n 256
+PARAMETER num_ctx 2048
+PARAMETER num_predict 200
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|im_start|>"
+
+TEMPLATE """{{ if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ .Response }}"""
+
+SYSTEM """Sos un asistente bilingüe en guaraní y español. Respondé en guaraní cuando el usuario te escriba en guaraní, en español cuando te escriba en español, y mezclá ambos (jopará) si te lo piden. Mantené tono respetuoso y referencias culturales paraguayas auténticas."""

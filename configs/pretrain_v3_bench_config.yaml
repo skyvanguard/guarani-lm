@@ -1,0 +1,56 @@
+# Benchmark config — identical to pretrain_v3 but capped at 30 steps,
+# no checkpoint writes. Used only to measure steps/sec before the real run.
+
+model:
+  name: "unsloth/Qwen2.5-3B"
+  load_in_4bit: true
+  max_seq_length: 2048
+  dtype: null
+
+lora:
+  r: 64
+  lora_alpha: 64
+  lora_dropout: 0.0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: true
+
+training:
+  output_dir: "checkpoints/cpt_v3_bench"
+  num_train_epochs: 1            # ignored when max_steps is set
+  max_steps: 30
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 3.0e-5
+  embedding_learning_rate: 3.0e-6
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 1
+  save_steps: 999999             # effectively never save during bench
+  save_total_limit: 1
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "none"
+
+data:
+  train_file: "data/processed/cpt_train.jsonl"
+  validation_file: "data/processed/cpt_val.jsonl"
+  text_field: "text"
+  max_length: 2048
+  packing: true
+
+wandb:
+  project: "guarani-lm"
+  run_name: "cpt-v3-bench"

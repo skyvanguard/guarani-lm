@@ -1,0 +1,57 @@
+# CPT v3 Refinement — applies continual pre-training ON TOP OF the SFT v3 model
+# to suppress out-of-distribution tokens (thai/chinese noise) without destroying SFT.
+#
+# Strategy: low LR + light LoRA + single epoch over 30% subset.
+
+model:
+  name: "checkpoints/sft_v3_only/final"  # SFT v3 model, not base Qwen
+  load_in_4bit: true
+  max_seq_length: 1024
+  dtype: null
+
+lora:
+  r: 32                # lighter than original CPT (was 64) — just refinement
+  lora_alpha: 32
+  lora_dropout: 0.0
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: true
+
+training:
+  output_dir: "checkpoints/cpt_v3_refine"
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 1.5e-5        # half of original CPT (3e-5) — preserve SFT gains
+  embedding_learning_rate: 1.5e-6
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  fp16: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  save_steps: 200              # ~50min between checkpoints
+  save_total_limit: 4
+  seed: 42
+  dataloader_num_workers: 2
+  report_to: "none"
+
+data:
+  train_file: "data/processed/cpt_train_v3_30pct.jsonl"
+  validation_file: "data/processed/cpt_val.jsonl"
+  text_field: "text"
+  max_length: 1024
+  packing: true
+
+wandb:
+  project: "guarani-lm"
+  run_name: "cpt-v3-refine-30pct-1ep"

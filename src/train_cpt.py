@@ -126,7 +126,7 @@ def train(config: dict[str, Any]) -> None:
     output_dir = Path(train_cfg["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    sft_config = SFTConfig(
+    sft_config_kwargs = dict(
         output_dir=str(output_dir),
         num_train_epochs=train_cfg["num_train_epochs"],
         per_device_train_batch_size=train_cfg["per_device_train_batch_size"],
@@ -150,6 +150,10 @@ def train(config: dict[str, Any]) -> None:
         max_seq_length=data_cfg.get("max_length", 2048),
         dataset_text_field=data_cfg.get("text_field", "text"),
     )
+    # Optional: cap total optimizer steps (useful for benchmarking)
+    if train_cfg.get("max_steps") is not None:
+        sft_config_kwargs["max_steps"] = int(train_cfg["max_steps"])
+    sft_config = SFTConfig(**sft_config_kwargs)
 
     # --- Train ---
     trainer_kwargs = dict(
