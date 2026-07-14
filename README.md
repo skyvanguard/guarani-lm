@@ -22,9 +22,17 @@ Guarani he'i 7 millon tapicha Paraguay-pe, ha upeicharõ jepe ndaipori modelo de
 |---------|-----------|---------------------|
 | Tipo | Generativo (decoder-only) | Encoder-only |
 | Tareas | Chat, traduccion, generacion | Solo clasificacion |
-| Tokens de entrenamiento | ~6.5M | ~800K |
+| Tokens de entrenamiento | ~6.5M (v1/v2) / ~31.8M (v3) | ~800K |
 | Formato | HuggingFace + GGUF (Ollama) | Solo PyTorch |
-| Base | Qwen2.5-0.5B | BERT multilingual |
+| Base | Qwen2.5-0.5B (v1/v2) / Qwen2.5-3B (v3) | BERT multilingual |
+
+### Generaciones del modelo
+
+| Version | Base | Corpus | Estado |
+|---------|------|--------|--------|
+| v1 | Qwen2.5-0.5B | ~6.5M tokens, CPT 1 epoch + SFT 114K | Completado |
+| v2 | Qwen2.5-0.5B | ~6.5M tokens, CPT 3 epochs + SFT 249K | Completado (release actual) |
+| v3 | Qwen2.5-3B | ~31.8M tokens (34,764 docs), pipeline Docker | En progreso (SFT round 2 pendiente) |
 
 ### Tareas soportadas
 
@@ -88,6 +96,8 @@ ollama run skyvanguard/guarani-lm
 
 ## Pipeline de datos
 
+### Corpus v1/v2 (~6.5M tokens)
+
 | Fuente | Tokens | Uso |
 |--------|--------|-----|
 | Wikipedia Guarani (~5K articulos) | ~1.5M | Pre-training |
@@ -97,34 +107,64 @@ ollama run skyvanguard/guarani-lm
 | NLLB-200 augmentation | ~2M | Pre-training + SFT |
 | **Total** | **~6.5M** | |
 
+### Corpus v3 (~31.8M tokens, 34,764 docs, 127M chars)
+
+Recolectado con 8+ scrapers propios (ver `scripts/`):
+
+- Corpora de HuggingFace: HPLT 2.0, mOSCAR, FineTranslations
+- Biblias en Guarani (NNP2015, GPC2006, GDC2006)
+- Publicaciones WOL JW (12 categorias, 8K+ docs)
+- Oremba'e (pipeline OCR con PyMuPDF + Tesseract)
+- Articulos de IP Gov Paraguay y noticias ABC Remiandu
+- Filtrado de idioma con fasttext + heuristicas de Guarani, deduplicacion MD5
+
+Para v3 el corpus ademas paso por limpieza de contaminacion (`scripts/clean_contamination.py`): cpt_train se redujo de 308K a 157K registros eliminando URLs, handles y hashtags, preservando 95.5% del contenido.
+
 ## Entrenamiento
 
-El entrenamiento se realiza en dos fases:
+El entrenamiento se realiza en dos fases: **Continual Pre-Training (CPT)** con QLoRA 4-bit y **Supervised Fine-Tuning (SFT)** con instrucciones en formato ChatML.
 
-1. **Continual Pre-Training (CPT)**: QLoRA 4-bit sobre Qwen2.5-0.5B con r=128, entrenando embeddings + todos los linear layers
-2. **Supervised Fine-Tuning (SFT)**: LoRA r=64 sobre el checkpoint CPT, con ~100K instrucciones en formato ChatML
-
-**Requisitos**: GPU con >=8GB VRAM (RTX 3070/4070 o superior)
+### v1/v2 (Qwen2.5-0.5B, GPU >=8GB VRAM)
 
 ```bash
-# Fase 1: Continual Pre-Training (~2-4h)
+# v1: fases separadas
 python src/train_cpt.py --config configs/pretrain_config.yaml
-
-# Fase 2: Instruction Fine-Tuning (~6-10h)
 python src/train_sft.py --config configs/sft_config.yaml
+
+# v2: pipeline completo (CPT 3 epochs -> SFT 249K x2 epochs, ~19h)
+bash run_training_v2.sh
 ```
+
+### v3 (Qwen2.5-3B, Docker, RTX 5070 Ti 12GB / Blackwell)
+
+v3 corre dentro de un contenedor con CUDA 12.8 + PyTorch 2.10 + Unsloth (soporte SM_120):
+
+```bash
+# Construir la imagen y lanzar el pipeline
+docker compose run --rm trainer bash run_training_v3.sh
+```
+
+Pipeline ejecutado hasta ahora: SFT directo sobre la base 3B (16.7h) -> refinamiento CPT (4h) -> limpieza de dataset. Queda pendiente el SFT round 2 sobre datos limpios (`configs/sft_v3_round2_config.yaml`, ~16h).
 
 ## Evaluacion
 
-| Tarea | Metrica | Baseline | GuaraniLM |
-|-------|---------|----------|-----------|
-| Traduccion GN->ES | chrF2 | NLLB-200 | TBD |
-| Traduccion ES->GN | chrF2 | NLLB-200 | TBD |
-| Clasificacion sentimiento | Macro-F1 | gn-bert | TBD |
-| Perplexidad GN | PPL | Qwen2.5-0.5B | TBD |
+Resultados en test sets held-out con greedy decoding (ver `docs/model_card.md` para detalles):
+
+| Tarea | Metrica | v1 | v2 | v3 (intermedio) |
+|-------|---------|----|----|-----------------|
+| Traduccion GN->ES | BLEU | 2.98 | 2.14 | 2.46 |
+| Traduccion GN->ES | chrF2 | 25.89 | 25.87 | - |
+| Traduccion ES->GN | BLEU | 1.71 | 1.56 | 1.20 |
+| Traduccion ES->GN | chrF2 | 21.27 | 22.34 | - |
+| Sentimiento (3 clases) | Accuracy | 21.9% | **46.9%** | 25%* |
+| Clasificacion | Accuracy | 22.2% | 24.6% | 14%* |
+| Perplexidad GN | PPL | 11.13 | 10.22 | **8.56** |
+
+\* El checkpoint v3 evaluado es intermedio (CPT despues de SFT degrada el instruction-following, como se esperaba). El SFT round 2 pendiente busca recuperar esas metricas manteniendo la ganancia de -16% en perplexidad.
 
 ```bash
-python src/evaluate.py --config configs/eval_config.yaml
+python src/evaluate.py --config configs/eval_v2_config.yaml  # v2
+python src/evaluate.py --config configs/eval_v3_config.yaml  # v3
 ```
 
 ---
@@ -133,13 +173,16 @@ python src/evaluate.py --config configs/eval_config.yaml
 
 ```
 guarani-lm/
-├── configs/          # Configuraciones YAML para training/eval
-├── scripts/          # Pipeline de datos: descarga, limpieza, preparacion
+├── configs/          # Configuraciones YAML para training/eval (v1, v2, v3)
+├── scripts/          # Pipeline de datos: descarga, scraping, limpieza, preparacion
 ├── src/              # Codigo principal: training, evaluacion, inferencia
+├── docker/           # Imagen CUDA 12.8 para entrenamiento v3 (Blackwell)
 ├── notebooks/        # Exploracion de datos y analisis
 ├── eval/             # Benchmarks y resultados
 ├── tests/            # Tests unitarios
-└── docs/             # Documentacion y model card
+├── docs/             # Documentacion y model card
+├── Modelfile.v3      # Modelfile de Ollama con params calibrados para v3
+└── run_training*.sh  # Orquestadores de pipeline por generacion
 ```
 
 ## Contribuir
